@@ -1,7 +1,7 @@
 # LinmaluLibrary
 
  - author : Linmalu(린마루)
- - Blog : http://blog.linmalu.com/
+ - HomePage : http://blog.linmalu.com/
  - Spigot : spigot-api-1.8.8-R0.1
  - Version : 1.05
 
