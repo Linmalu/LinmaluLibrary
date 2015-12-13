@@ -6,25 +6,24 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.MessageDigest;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 public class LinmaluCheckMD5 implements Runnable
 {
 	private boolean check = true;
 	private Plugin plugin;
-	private UUID uuid;
+	private CommandSender sender;
 	private String msg;
 	private File file;
 	private String url;
 
-	public LinmaluCheckMD5(Plugin plugin, Player player, String msg)
+	public LinmaluCheckMD5(Plugin plugin, CommandSender sender, String msg)
 	{
 		this.plugin = plugin;
-		this.uuid = player.getUniqueId();
+		this.sender = sender;
 		this.msg = msg;
 		file = new File(plugin.getDataFolder() + ".jar");
 		url = "http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/" + plugin.getDescription().getVersion();
@@ -71,11 +70,7 @@ public class LinmaluCheckMD5 implements Runnable
 		}
 		else
 		{
-			Player player = Bukkit.getPlayer(uuid);
-			if(player != null)
-			{
-				player.sendMessage(msg);
-			}
+			sender.sendMessage(msg);
 		}
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,18 +14,17 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
-
 public class LinmaluTellraw
 {
-	public static void sendCmdChat(Player player, String cmd, String msg)
+	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
 	{
-		new LinmaluTellraw("$CC:" + msg + "|" + cmd + "$").changeCmdChat().sendMessage(player);
+		new LinmaluTellraw("$CC:" + msg + "|" + cmd + "$").changeCmdChat().sendMessage(sender);
 	}
-	public static void sendCmd(Player player, String cmd, String msg)
+	public static void sendCmd(CommandSender sender, String cmd, String msg)
 	{
-		new LinmaluTellraw("$C:" + msg + "|" + cmd + "$").changeCmd().sendMessage(player);
+		new LinmaluTellraw("$C:" + msg + "|" + cmd + "$").changeCmd().sendMessage(sender);
 	}
-	
+
 	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
 	private final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
 	private final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
@@ -33,7 +33,7 @@ public class LinmaluTellraw
 	private final String[] cmdchats = new String[]{"$CMDCHAT:", "$CC:", "$명령어채팅:"};
 	private boolean change = false;
 	private String msg;
-	
+
 	public LinmaluTellraw()
 	{
 		msg = "";
@@ -51,25 +51,32 @@ public class LinmaluTellraw
 	{
 		return change;
 	}
-	public void sendMessage(List<Player> list)
+	public <T extends CommandSender> void sendMessage(List<T> list)
 	{
-		for(Player player : list)
+		for(T sender : list)
 		{
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " {text:\"\",extra:[{text:\"" + msg + "\"}]}");
+			sendMessage(sender);
 		}
 	}
-	public void sendMessage(Set<Player> list)
+	public <T extends CommandSender> void sendMessage(Set<T> list)
 	{
-		for(Player player : list)
+		for(T sender : list)
 		{
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " {text:\"\",extra:[{text:\"" + msg + "\"}]}");
+			sendMessage(sender);
 		}
 	}
-	public void sendMessage(Player ... list)
+	public void sendMessage(CommandSender ... list)
 	{
-		for(Player player : list)
+		for(CommandSender sender : list)
 		{
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + player.getName() + " {text:\"\",extra:[{text:\"" + msg + "\"}]}");
+			if(sender instanceof Player)
+			{
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " {text:\"\",extra:[{text:\"" + msg + "\"}]}");
+			}
+			else
+			{
+				sender.sendMessage(msg);
+			}
 		}
 	}
 	public LinmaluTellraw changeItem(Player player)
@@ -123,7 +130,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "§").replace("|", "\n")));
+				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -144,7 +151,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "§").replace("|", "\n")));
+				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -166,8 +173,8 @@ public class LinmaluTellraw
 				}
 				sub = msg.substring(i1, i2 +1);
 				boolean find = false;
-				String ci = getCmdItem(sub.replace("$", "").replace("&", "§").replace("|", "\n"));
-				String display = sub.replace("|", "\n").split("\n")[0];
+				String ci = getCmdItem(sub.replace("$", "").replace("&", "§"));
+				String display = sub.split("\\|")[0];
 				for(int i = 1; i < 10; i++)
 				{
 					if(sub.startsWith(cmd + i))
@@ -203,7 +210,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§").replace("|", "\n")));
+				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -224,7 +231,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "§").replace("|", "\n")));
+				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -334,11 +341,11 @@ public class LinmaluTellraw
 	}
 	private String getText(String msg)
 	{
-		String[] msgs = msg.replace("\"", "\\\"").split("\n");
+		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		String display = msgs[0];
 		if(msgs.length > 1)
 		{
-			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "\n", "") + "\"}}";
+			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|", "") + "\"}}";
 		}
 		else
 		{
@@ -348,7 +355,7 @@ public class LinmaluTellraw
 	}
 	private String getCmd(String msg)
 	{
-		String[] msgs = msg.replace("\"", "\\\"").split("\n");
+		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		String display = msgs[0];
 		if(msgs.length > 1)
 		{
@@ -362,7 +369,7 @@ public class LinmaluTellraw
 	}
 	private String getCmdItem(String msg)
 	{
-		String[] msgs = msg.replace("\"", "\\\"").split("\n");
+		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		if(msgs.length > 1)
 		{
 			msg = ", clickEvent:{action:run_command, value:\"" + msgs[1] + "\"}";
@@ -375,7 +382,7 @@ public class LinmaluTellraw
 	}
 	private String getCmdText(String msg)
 	{
-		String[] msgs = msg.replace("\"", "\\\"").split("\n");
+		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		String display = msgs[0];
 		String cmd;
 		if(msgs.length > 1)
@@ -388,7 +395,7 @@ public class LinmaluTellraw
 		}
 		if(msgs.length > 2)
 		{
-			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "\n" + msgs[1] + "\n", "") + "\"}}";
+			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|" + msgs[1] + "|", "") + "\"}}";
 		}
 		else
 		{
@@ -398,7 +405,7 @@ public class LinmaluTellraw
 	}
 	private String getCmdChat(String msg)
 	{
-		String[] msgs = msg.replace("\"", "\\\"").split("\n");
+		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		String display = msgs[0];
 		if(msgs.length > 1)
 		{

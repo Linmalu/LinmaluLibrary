@@ -3,25 +3,24 @@ package com.linmalu.LinmaluLibrary.API;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 public class LinmaluCheckVersion implements Runnable
 {
 	private boolean check = true;
 	private Plugin plugin;
-	private UUID uuid;
+	private CommandSender sender;
 	private String msg;
 	private String url;
 	private float version;
 
-	public LinmaluCheckVersion(Plugin plugin, Player player, String msg)
+	public LinmaluCheckVersion(Plugin plugin, CommandSender sender, String msg)
 	{
 		this.plugin = plugin;
-		this.uuid = player.getUniqueId();
+		this.sender = sender;
 		this.msg = msg;
 		url = "http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/version";
 		version = Float.parseFloat(plugin.getDescription().getVersion());
@@ -53,11 +52,7 @@ public class LinmaluCheckVersion implements Runnable
 		}
 		else
 		{
-			Player player = Bukkit.getPlayer(uuid);
-			if(player != null)
-			{
-				player.sendMessage(msg);
-			}
+			sender.sendMessage(msg);
 		}
 	}
 }

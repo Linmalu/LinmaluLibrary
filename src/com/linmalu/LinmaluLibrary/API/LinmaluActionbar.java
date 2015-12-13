@@ -3,8 +3,8 @@ package com.linmalu.LinmaluLibrary.API;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.comphenix.packetwrapper.WrapperPlayServerChat;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.linmalu.LinmaluLibrary.PacketWrapper.WrapperPlayServerChat;
 
 public class LinmaluActionbar
 {
