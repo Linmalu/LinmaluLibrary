@@ -1,4 +1,4 @@
-package com.linmalu.linmalulibrary;
+package com.linmalu.library;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;

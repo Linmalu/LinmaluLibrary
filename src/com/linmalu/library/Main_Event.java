@@ -1,4 +1,4 @@
-package com.linmalu.linmalulibrary;
+package com.linmalu.library;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -6,8 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.linmalu.linmalulibrary.api.LinmaluMD5;
-import com.linmalu.linmalulibrary.api.LinmaluVersion;
+import com.linmalu.library.api.LinmaluMD5;
+import com.linmalu.library.api.LinmaluVersion;
 
 public class Main_Event implements Listener
 {

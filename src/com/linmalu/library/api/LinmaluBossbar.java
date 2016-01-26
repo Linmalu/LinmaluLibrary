@@ -1,4 +1,4 @@
-package com.linmalu.linmalulibrary.api;
+package com.linmalu.library.api;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import com.comphenix.packetwrapper.WrapperPlayServerEntityTeleport;
 import com.comphenix.packetwrapper.WrapperPlayServerSpawnEntityLiving;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import com.linmalu.linmalulibrary.LinmaluLibrary;
+import com.linmalu.library.LinmaluLibrary;
 
 public class LinmaluBossbar implements Runnable
 {
@@ -158,8 +158,9 @@ public class LinmaluBossbar implements Runnable
 			spawn2.setHeadPitch(loc.getPitch());
 			spawn2.setMetadata(data);
 			spawn2.sendPacket(player);
+			player.sendMessage("aaaaaaa");
 		}
-		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this, 20);
+		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this, 30);
 		if(info == null)
 		{
 			players.put(player.getUniqueId(), new PlayerInfo(player, taskId));

@@ -1,9 +1,9 @@
-package com.linmalu.linmalulibrary.api;
+package com.linmalu.library.api;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.linmalu.linmalulibrary.LinmaluLibrary;
+import com.linmalu.library.LinmaluLibrary;
 
 public class LinmaluAutoRespawn implements Runnable
 {

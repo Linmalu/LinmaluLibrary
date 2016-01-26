@@ -1,4 +1,4 @@
-package com.linmalu.linmalulibrary.api;
+package com.linmalu.library.api;
 
 import java.math.BigDecimal;
 import java.util.Comparator;

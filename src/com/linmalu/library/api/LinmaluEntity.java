@@ -1,4 +1,4 @@
-package com.linmalu.linmalulibrary.api;
+package com.linmalu.library.api;
 
 import org.bukkit.entity.Entity;
 
