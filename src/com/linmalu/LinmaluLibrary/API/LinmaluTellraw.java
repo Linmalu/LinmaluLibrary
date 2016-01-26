@@ -1,4 +1,4 @@
-package com.linmalu.LinmaluLibrary.API;
+package com.linmalu.linmalulibrary.api;
 
 import java.util.List;
 import java.util.Set;
@@ -25,12 +25,12 @@ public class LinmaluTellraw
 		new LinmaluTellraw("$C:" + msg + "|" + cmd + "$").changeCmd().sendMessage(sender);
 	}
 
-	private final String[] items = new String[]{"$ITEM", "$I", "$¾ÆÀÌÅÛ"};
-	private final String[] texts = new String[]{"$TEXT:", "$T:", "$ÅØ½ºÆ®:"};
-	private final String[] cmds = new String[]{"$CMD:", "$C:", "$¸í·É¾î:"};
-	private final String[] itemcmds = new String[]{"$CMDITEM", "$CI", "$¸í·É¾î¾ÆÀÌÅÛ"};
-	private final String[] textcmds = new String[]{"$CMDTEXT:", "$CT:", "$¸í·É¾îÅØ½ºÆ®:"};
-	private final String[] cmdchats = new String[]{"$CMDCHAT:", "$CC:", "$¸í·É¾îÃ¤ÆÃ:"};
+	private final String[] items = new String[]{"$ITEM", "$I", "$ì•„ì´í…œ"};
+	private final String[] texts = new String[]{"$TEXT:", "$T:", "$í…ìŠ¤íŠ¸:"};
+	private final String[] cmds = new String[]{"$CMD:", "$C:", "$ëª…ë ¹ì–´:"};
+	private final String[] itemcmds = new String[]{"$CMDITEM", "$CI", "$ëª…ë ¹ì–´ì•„ì´í…œ"};
+	private final String[] textcmds = new String[]{"$CMDTEXT:", "$CT:", "$ëª…ë ¹ì–´í…ìŠ¤íŠ¸:"};
+	private final String[] cmdchats = new String[]{"$CMDCHAT:", "$CC:", "$ëª…ë ¹ì–´ì±„íŒ…:"};
 	private boolean change = false;
 	private String msg;
 
@@ -100,14 +100,14 @@ public class LinmaluTellraw
 					if(sub.startsWith(cmd + i))
 					{
 						find = true;
-						String display = sub.replace(cmd + i + ":", "").replace(cmd + i, "").replace("$", "").replace("&", "¡×");
+						String display = sub.replace(cmd + i + ":", "").replace(cmd + i, "").replace("$", "").replace("&", "Â§");
 						msg = msg.replace(sub, getItem(player.getInventory().getItem(i - 1), display, ""));
 						break;
 					}
 				}
 				if(!find)
 				{
-					String display = sub.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "¡×");
+					String display = sub.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "Â§");
 					msg = msg.replace(sub, getItem(player.getItemInHand(), display, ""));
 				}
 				change = true;
@@ -130,7 +130,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "¡×")));
+				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "Â§")));
 				change = true;
 			}
 		}
@@ -151,7 +151,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "¡×")));
+				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "Â§")));
 				change = true;
 			}
 		}
@@ -173,21 +173,21 @@ public class LinmaluTellraw
 				}
 				sub = msg.substring(i1, i2 +1);
 				boolean find = false;
-				String ci = getCmdItem(sub.replace("$", "").replace("&", "¡×"));
+				String ci = getCmdItem(sub.replace("$", "").replace("&", "Â§"));
 				String display = sub.split("\\|")[0];
 				for(int i = 1; i < 10; i++)
 				{
 					if(sub.startsWith(cmd + i))
 					{
 						find = true;
-						display = display.replace(cmd + i + ":", "").replace(cmd + i, "").replace("$", "").replace("&", "¡×");
+						display = display.replace(cmd + i + ":", "").replace(cmd + i, "").replace("$", "").replace("&", "Â§");
 						msg = msg.replace(sub, getItem(player.getInventory().getItem(i - 1), display, ci));
 						break;
 					}
 				}
 				if(!find)
 				{
-					display = display.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "¡×");
+					display = display.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "Â§");
 					msg = msg.replace(sub, getItem(player.getItemInHand(), display, ci));
 				}
 				change = true;
@@ -210,7 +210,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "¡×")));
+				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "Â§")));
 				change = true;
 			}
 		}
@@ -231,7 +231,7 @@ public class LinmaluTellraw
 					break;
 				}
 				sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "¡×")));
+				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "Â§")));
 				change = true;
 			}
 		}
@@ -242,7 +242,7 @@ public class LinmaluTellraw
 	{
 		if(item == null || item.getType() == Material.AIR)
 		{
-			return "\"}, {text:\"" + ChatColor.AQUA + "[¸Ç¼Õ]\"" + cmd + "}, {text:\"";
+			return "\"}, {text:\"" + ChatColor.AQUA + "[ë§¨ì†]\"" + cmd + "}, {text:\"";
 		}
 		boolean count = true;
 		ItemMeta im = item.getItemMeta();
@@ -258,7 +258,7 @@ public class LinmaluTellraw
 		}
 		else
 		{
-			display = ChatColor.AQUA + "[¾ÆÀÌÅÛ]";
+			display = ChatColor.AQUA + "[ì•„ì´í…œ]";
 		}
 		count = true;
 		if(im.hasLore())

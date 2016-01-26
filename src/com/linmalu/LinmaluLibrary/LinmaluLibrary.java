@@ -1,5 +1,6 @@
-package com.linmalu.LinmaluLibrary;
+package com.linmalu.linmalulibrary;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class LinmaluLibrary extends JavaPlugin
@@ -10,14 +11,18 @@ public class LinmaluLibrary extends JavaPlugin
 	{
 		linmaluLibrary = this;
 		getServer().getPluginManager().registerEvents(new Main_Event(), this);
-		getLogger().info("Á¦ÀÛ : ¸°¸¶·ç");
+		getLogger().info("ì œìž‘ : ë¦°ë§ˆë£¨");
 	}
 	public void onDisable()
 	{
-		getLogger().info("Á¦ÀÛ : ¸°¸¶·ç");
+		getLogger().info("ì œìž‘ : ë¦°ë§ˆë£¨");
 	}
 	public static LinmaluLibrary getLinmaluLibrary()
 	{
 		return linmaluLibrary;
+	}
+	public String getTitle()
+	{
+		return ChatColor.AQUA + "[" + getDescription().getDescription() + "] ";
 	}
 }

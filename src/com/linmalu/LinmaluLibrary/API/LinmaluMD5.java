@@ -1,4 +1,4 @@
-package com.linmalu.LinmaluLibrary.API;
+package com.linmalu.linmalulibrary.api;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,8 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class LinmaluCheckMD5 implements Runnable
+public class LinmaluMD5 implements Runnable
 {
+	public static void check(Plugin plugin, CommandSender sender, String msg)
+	{
+		new LinmaluMD5(plugin, sender, msg);
+	}
+
 	private boolean check = true;
 	private Plugin plugin;
 	private CommandSender sender;
@@ -20,7 +25,7 @@ public class LinmaluCheckMD5 implements Runnable
 	private File file;
 	private String url;
 
-	public LinmaluCheckMD5(Plugin plugin, CommandSender sender, String msg)
+	private LinmaluMD5(Plugin plugin, CommandSender sender, String msg)
 	{
 		this.plugin = plugin;
 		this.sender = sender;

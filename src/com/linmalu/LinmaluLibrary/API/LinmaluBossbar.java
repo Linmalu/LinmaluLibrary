@@ -1,6 +1,9 @@
-package com.linmalu.LinmaluLibrary.API;
+package com.linmalu.linmalulibrary.api;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,102 +11,195 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.packetwrapper.WrapperPlayServerEntityDestroy;
+import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
+import com.comphenix.packetwrapper.WrapperPlayServerEntityTeleport;
+import com.comphenix.packetwrapper.WrapperPlayServerSpawnEntityLiving;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.linmalu.LinmaluLibrary.LinmaluLibrary;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.linmalu.linmalulibrary.LinmaluLibrary;
 
 public class LinmaluBossbar implements Runnable
 {
-	private static int bossbarID = 0;
-	private static HashMap<Integer, Integer> schedule = new HashMap<>();
+	private static int bossbarID1 = 0;
+	private static int bossbarID2 = 0;
+	private static HashMap<UUID, PlayerInfo> players = new HashMap<>(); 
 
+	@Deprecated
 	public static void setMessage(String message)
 	{
 		for(Player player : Bukkit.getOnlinePlayers())
 		{
-			new LinmaluBossbar(player, message, 100);
+			sendMessage(player, message, 100);
 		}
 	}
+	@Deprecated
 	public static void setMessage(String message, float health)
 	{
 		for(Player player : Bukkit.getOnlinePlayers())
 		{
-			new LinmaluBossbar(player, message, health);
+			sendMessage(player, message, health);
 		}
 	}
+	@Deprecated
 	public static void setMessage(Player player, String message)
 	{
-		new LinmaluBossbar(player, message, 100);
+		sendMessage(player, message, 100);
 	}
+	@Deprecated
 	public static void setMessage(Player player, String message, float health)
+	{
+		sendMessage(player, message, health);
+	}
+	public static void sendMessage(String message)
+	{
+		for(Player player : Bukkit.getOnlinePlayers())
+		{
+			sendMessage(player, message, 100);
+		}
+	}
+	public static void sendMessage(String message, float health)
+	{
+		for(Player player : Bukkit.getOnlinePlayers())
+		{
+			sendMessage(player, message, health);
+		}
+	}
+	public static void sendMessage(Player player, String message)
+	{
+		sendMessage(player, message, 100);
+	}
+	public static void sendMessage(Player player, String message, float health)
 	{
 		new LinmaluBossbar(player, message, health);
 	}
 
-	private Player player;
 	private int taskId;
+	private Player player;
+	private final int distance = 100;
 
-	@SuppressWarnings("deprecation")
 	private LinmaluBossbar(Player player, String message, float health)
 	{
 		this.player = player;
-		if(bossbarID == 0)
+		if(bossbarID1 == 0)
 		{
 			Zombie zombie = player.getWorld().spawn(new Location(player.getWorld(), 0, -100, 0), Zombie.class);
-			bossbarID = zombie.getEntityId();
+			bossbarID1 = zombie.getEntityId();
 			zombie.remove();
 		}
-		health = health / 100 * 200;
-		health = health > 200 ? 200 : health <= 0 ? 1 : health;
-		ProtocolManager pm = ProtocolLibrary.getProtocolManager();
-		PacketContainer pc = pm.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-		StructureModifier<Integer> ints = pc.getIntegers();
-		ints.writeDefaults();
-		ints.write(0, bossbarID);
-		ints.write(1, (int)EntityType.ENDER_DRAGON.getTypeId());
-		ints.write(2, player.getLocation().getBlockX() * 32);
-		ints.write(3, (player.getLocation().getBlockY() -300) * 32);
-		ints.write(4, player.getLocation().getBlockZ() * 32);
-		WrappedDataWatcher watcher = new WrappedDataWatcher();
-		watcher.setObject(0, (byte)0);
-		watcher.setObject(2, message);
-		watcher.setObject(6, health);
-//		watcher.setObject(10, message);
-		pc.getDataWatcherModifier().writeDefaults();
-		pc.getDataWatcherModifier().write(0, watcher);
-		try
+		if(bossbarID2 == 0)
 		{
-			pm.sendServerPacket(player, pc);
+			Zombie zombie = player.getWorld().spawn(new Location(player.getWorld(), 0, -100, 0), Zombie.class);
+			bossbarID2 = zombie.getEntityId();
+			zombie.remove();
 		}
-		catch (Exception e)
+		health = health / 100 * 300;
+		health = health > 300 ? 300 : health <= 0 ? 1 : health;
+		PlayerInfo info = players.get(player.getUniqueId());
+		if(info != null && info.equalsWorld(player))
 		{
-			e.printStackTrace();
+			List<WrappedWatchableObject> datas = Arrays.asList(new WrappedWatchableObject(2, message), new WrappedWatchableObject(6, health));
+			WrapperPlayServerEntityMetadata update1 = new WrapperPlayServerEntityMetadata();
+			update1.setEntityID(bossbarID1);
+			update1.setMetadata(datas);
+			update1.sendPacket(player);
+			WrapperPlayServerEntityMetadata update2 = new WrapperPlayServerEntityMetadata();
+			update2.setEntityID(bossbarID2);
+			update2.setMetadata(datas);
+			update2.sendPacket(player);
+			WrapperPlayServerEntityTeleport move1 = new WrapperPlayServerEntityTeleport();
+			move1.setEntityID(bossbarID1);
+			Location loc = player.getLocation();
+			loc.add(loc.getDirection().multiply(distance));
+			move1.setX(loc.getX());
+			move1.setY(loc.getY());
+			move1.setZ(loc.getZ());
+			move1.setYaw(loc.getYaw());
+			move1.setPitch(loc.getPitch());
+			move1.sendPacket(player);
+			WrapperPlayServerEntityTeleport move2 = new WrapperPlayServerEntityTeleport();
+			move2.setEntityID(bossbarID2);
+			loc = player.getLocation();
+			loc.subtract(loc.getDirection().multiply(distance));
+			move2.setX(loc.getX());
+			move2.setY(loc.getY());
+			move2.setZ(loc.getZ());
+			move2.setYaw(loc.getYaw());
+			move2.setPitch(loc.getPitch());
+			move2.sendPacket(player);
 		}
-		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this, 20L);
-		schedule.put(player.getEntityId(), taskId);
+		else
+		{
+			WrappedDataWatcher data = new WrappedDataWatcher();
+			data.setObject(0, (byte)0x20);
+			data.setObject(2, message);
+			data.setObject(6, health);
+			WrapperPlayServerSpawnEntityLiving spawn1 = new WrapperPlayServerSpawnEntityLiving();
+			spawn1.setEntityID(bossbarID1);
+			spawn1.setType(EntityType.WITHER);
+			Location loc = player.getLocation();
+			loc.add(loc.getDirection().multiply(distance));
+			spawn1.setX(loc.getX());
+			spawn1.setY(loc.getY());
+			spawn1.setZ(loc.getZ());
+			spawn1.setYaw(loc.getYaw());
+			spawn1.setHeadPitch(loc.getPitch());
+			spawn1.setMetadata(data);
+			spawn1.sendPacket(player);
+			WrapperPlayServerSpawnEntityLiving spawn2 = new WrapperPlayServerSpawnEntityLiving();
+			spawn2.setEntityID(bossbarID2);
+			spawn2.setType(EntityType.WITHER);
+			loc = player.getLocation();
+			loc.subtract(loc.getDirection().multiply(distance));
+			spawn2.setX(loc.getX());
+			spawn2.setY(loc.getY());
+			spawn2.setZ(loc.getZ());
+			spawn2.setYaw(loc.getYaw());
+			spawn2.setHeadPitch(loc.getPitch());
+			spawn2.setMetadata(data);
+			spawn2.sendPacket(player);
+		}
+		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this, 20);
+		if(info == null)
+		{
+			players.put(player.getUniqueId(), new PlayerInfo(player, taskId));
+		}
+		else
+		{
+			info.resetInfo(player, taskId);
+		}
 	}
 	public void run()
 	{
-		int id = player.getEntityId();
-		if(schedule.containsKey(id) && schedule.get(id) != taskId)
+		if(players.containsKey(player.getUniqueId()) && players.get(player.getUniqueId()).isTaskId(taskId))
 		{
-			return;
+			WrapperPlayServerEntityDestroy remove = new WrapperPlayServerEntityDestroy();
+			remove.setEntityIds(new int[]{bossbarID1, bossbarID2});
+			remove.sendPacket(player);
+			players.remove(player.getUniqueId());
 		}
-		ProtocolManager pm = ProtocolLibrary.getProtocolManager();
-		PacketContainer pc = pm.createPacket(PacketType.Play.Server.ENTITY_DESTROY);
-		pc.getIntegerArrays().write(0, new int[]{bossbarID});
-		try
+	}
+	private class PlayerInfo
+	{
+		private String worldName;
+		private int taskId;
+
+		public PlayerInfo(Player player, int taskId)
 		{
-			pm.sendServerPacket(player, pc);
+			resetInfo(player, taskId);
 		}
-		catch (Exception e)
+		public void resetInfo(Player player, int taskId)
 		{
-			e.printStackTrace();
+			worldName = player.getWorld().getName();
+			this.taskId = taskId;
 		}
-		schedule.remove(id);
+		public boolean isTaskId(int taskId)
+		{
+			return this.taskId == taskId;
+		}
+		public boolean equalsWorld(Player player)
+		{
+			return worldName.equals(player.getWorld().getName());
+		}
 	}
 }

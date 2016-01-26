@@ -18,11 +18,11 @@
  */
 package com.comphenix.packetwrapper;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketContainer;
 
 public class WrapperPlayClientCustomPayload extends AbstractPacket {
     public static final PacketType TYPE = PacketType.Play.Client.CUSTOM_PAYLOAD;

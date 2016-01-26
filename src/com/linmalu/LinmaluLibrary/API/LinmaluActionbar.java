@@ -1,4 +1,4 @@
-package com.linmalu.LinmaluLibrary.API;
+package com.linmalu.linmalulibrary.api;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -8,19 +8,28 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class LinmaluActionbar
 {
+	private LinmaluActionbar(){};
+	@Deprecated
 	public static void setMessage(String message)
 	{
 		for(Player player : Bukkit.getOnlinePlayers())
 		{
-			new LinmaluActionbar(player, message);
+			sendMessage(player, message);
 		}
 	}
+	@Deprecated
 	public static void setMessage(Player player, String message)
 	{
-		new LinmaluActionbar(player, message);
+		sendMessage(message);
 	}
-
-	private LinmaluActionbar(Player player, String message)
+	public static void sendMessage(String message)
+	{
+		for(Player player : Bukkit.getOnlinePlayers())
+		{
+			sendMessage(player, message);
+		}
+	}
+	public static void sendMessage(Player player, String message)
 	{
 		WrapperPlayServerChat psc = new WrapperPlayServerChat();
 		psc.setPosition((byte)2);

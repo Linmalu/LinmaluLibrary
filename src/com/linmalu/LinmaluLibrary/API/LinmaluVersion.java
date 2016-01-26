@@ -1,4 +1,4 @@
-package com.linmalu.LinmaluLibrary.API;
+package com.linmalu.linmalulibrary.api;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,8 +8,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-public class LinmaluCheckVersion implements Runnable
+public class LinmaluVersion implements Runnable
 {
+	public static void check(Plugin plugin, CommandSender sender, String msg)
+	{
+		new LinmaluVersion(plugin, sender, msg);
+	}
+
 	private boolean check = true;
 	private Plugin plugin;
 	private CommandSender sender;
@@ -17,7 +22,7 @@ public class LinmaluCheckVersion implements Runnable
 	private String url;
 	private float version;
 
-	public LinmaluCheckVersion(Plugin plugin, CommandSender sender, String msg)
+	private LinmaluVersion(Plugin plugin, CommandSender sender, String msg)
 	{
 		this.plugin = plugin;
 		this.sender = sender;
