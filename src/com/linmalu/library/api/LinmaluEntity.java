@@ -7,6 +7,8 @@ import com.comphenix.protocol.ProtocolManager;
 
 public class LinmaluEntity
 {
+	private LinmaluEntity(){}
+
 	public static void reloadEntity(Entity entity)
 	{
 		ProtocolManager pm = ProtocolLibrary.getProtocolManager();

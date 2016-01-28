@@ -9,11 +9,6 @@ import java.util.TreeMap;
 
 public class LinmaluRanking<T extends Number> implements Comparator<String>
 {
-	@Deprecated
-	public static LinkedHashMap<String, Integer> getRanking(HashMap<String, Integer> map)
-	{
-		return getRanking(map, false);
-	}
 	public static <T extends Number> LinkedHashMap<String, T> getRanking(HashMap<String, T> map, boolean ascendingOrder)
 	{
 		TreeMap<String, T> key = new TreeMap<>(new LinmaluRanking<T>(map, ascendingOrder));

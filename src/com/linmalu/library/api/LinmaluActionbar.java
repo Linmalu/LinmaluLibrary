@@ -8,20 +8,8 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class LinmaluActionbar
 {
-	private LinmaluActionbar(){};
-	@Deprecated
-	public static void setMessage(String message)
-	{
-		for(Player player : Bukkit.getOnlinePlayers())
-		{
-			sendMessage(player, message);
-		}
-	}
-	@Deprecated
-	public static void setMessage(Player player, String message)
-	{
-		sendMessage(message);
-	}
+	private LinmaluActionbar(){}
+
 	public static void sendMessage(String message)
 	{
 		for(Player player : Bukkit.getOnlinePlayers())

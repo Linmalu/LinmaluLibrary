@@ -21,36 +21,9 @@ import com.linmalu.library.LinmaluLibrary;
 
 public class LinmaluBossbar implements Runnable
 {
-	private static int bossbarID1 = 0;
-	private static int bossbarID2 = 0;
+	private static int[] bossbarIds = {0, 0, 0, 0, 0 ,0};
 	private static HashMap<UUID, PlayerInfo> players = new HashMap<>(); 
 
-	@Deprecated
-	public static void setMessage(String message)
-	{
-		for(Player player : Bukkit.getOnlinePlayers())
-		{
-			sendMessage(player, message, 100);
-		}
-	}
-	@Deprecated
-	public static void setMessage(String message, float health)
-	{
-		for(Player player : Bukkit.getOnlinePlayers())
-		{
-			sendMessage(player, message, health);
-		}
-	}
-	@Deprecated
-	public static void setMessage(Player player, String message)
-	{
-		sendMessage(player, message, 100);
-	}
-	@Deprecated
-	public static void setMessage(Player player, String message, float health)
-	{
-		sendMessage(player, message, health);
-	}
 	public static void sendMessage(String message)
 	{
 		for(Player player : Bukkit.getOnlinePlayers())
@@ -81,52 +54,43 @@ public class LinmaluBossbar implements Runnable
 	private LinmaluBossbar(Player player, String message, float health)
 	{
 		this.player = player;
-		if(bossbarID1 == 0)
+		for(int i = 0; i < bossbarIds.length; i++)
 		{
-			Zombie zombie = player.getWorld().spawn(new Location(player.getWorld(), 0, -100, 0), Zombie.class);
-			bossbarID1 = zombie.getEntityId();
-			zombie.remove();
-		}
-		if(bossbarID2 == 0)
-		{
-			Zombie zombie = player.getWorld().spawn(new Location(player.getWorld(), 0, -100, 0), Zombie.class);
-			bossbarID2 = zombie.getEntityId();
-			zombie.remove();
+			if(bossbarIds[i] == 0)
+			{
+				Zombie zombie = player.getWorld().spawn(new Location(player.getWorld(), 0, -100, 0), Zombie.class);
+				bossbarIds[i] = zombie.getEntityId();
+				zombie.remove();
+			}
 		}
 		health = health / 100 * 300;
 		health = health > 300 ? 300 : health <= 0 ? 1 : health;
 		PlayerInfo info = players.get(player.getUniqueId());
+		Location loc = player.getLocation();
+		loc.add(loc.getDirection().multiply(distance));
+		Location loc1 = player.getLocation();
+		loc1.setYaw(0);
+		loc1.setPitch(0);
+		loc1.add(loc1.getDirection().multiply(distance));
+		Location[] locs = {loc.clone(), LinmaluMath.rotation(loc.clone(), player.getLocation(), 180, 90), LinmaluMath.rotation(loc.clone(), player.getLocation(), 180, 180), LinmaluMath.rotation(loc.clone(), player.getLocation(), 180, 270), LinmaluMath.rotationY(loc1.clone(), player.getLocation(), -LinmaluMath.yawAngle(loc, player.getLocation()) + 90), LinmaluMath.rotationY(loc1.clone(), player.getLocation(), -LinmaluMath.yawAngle(loc, player.getLocation()) + 270)};
 		if(info != null && info.equalsWorld(player))
 		{
 			List<WrappedWatchableObject> datas = Arrays.asList(new WrappedWatchableObject(2, message), new WrappedWatchableObject(6, health));
-			WrapperPlayServerEntityMetadata update1 = new WrapperPlayServerEntityMetadata();
-			update1.setEntityID(bossbarID1);
-			update1.setMetadata(datas);
-			update1.sendPacket(player);
-			WrapperPlayServerEntityMetadata update2 = new WrapperPlayServerEntityMetadata();
-			update2.setEntityID(bossbarID2);
-			update2.setMetadata(datas);
-			update2.sendPacket(player);
-			WrapperPlayServerEntityTeleport move1 = new WrapperPlayServerEntityTeleport();
-			move1.setEntityID(bossbarID1);
-			Location loc = player.getLocation();
-			loc.add(loc.getDirection().multiply(distance));
-			move1.setX(loc.getX());
-			move1.setY(loc.getY());
-			move1.setZ(loc.getZ());
-			move1.setYaw(loc.getYaw());
-			move1.setPitch(loc.getPitch());
-			move1.sendPacket(player);
-			WrapperPlayServerEntityTeleport move2 = new WrapperPlayServerEntityTeleport();
-			move2.setEntityID(bossbarID2);
-			loc = player.getLocation();
-			loc.subtract(loc.getDirection().multiply(distance));
-			move2.setX(loc.getX());
-			move2.setY(loc.getY());
-			move2.setZ(loc.getZ());
-			move2.setYaw(loc.getYaw());
-			move2.setPitch(loc.getPitch());
-			move2.sendPacket(player);
+			for(int i = 0; i < bossbarIds.length; i++)
+			{
+				WrapperPlayServerEntityTeleport move = new WrapperPlayServerEntityTeleport();
+				move.setEntityID(bossbarIds[i]);
+				move.setX(locs[i].getX());
+				move.setY(locs[i].getY());
+				move.setZ(locs[i].getZ());
+				move.setYaw(locs[i].getYaw());
+				move.setPitch(locs[i].getPitch());
+				move.sendPacket(player);
+				WrapperPlayServerEntityMetadata update = new WrapperPlayServerEntityMetadata();
+				update.setEntityID(bossbarIds[i]);
+				update.setMetadata(datas);
+				update.sendPacket(player);
+			}
 		}
 		else
 		{
@@ -134,31 +98,19 @@ public class LinmaluBossbar implements Runnable
 			data.setObject(0, (byte)0x20);
 			data.setObject(2, message);
 			data.setObject(6, health);
-			WrapperPlayServerSpawnEntityLiving spawn1 = new WrapperPlayServerSpawnEntityLiving();
-			spawn1.setEntityID(bossbarID1);
-			spawn1.setType(EntityType.WITHER);
-			Location loc = player.getLocation();
-			loc.add(loc.getDirection().multiply(distance));
-			spawn1.setX(loc.getX());
-			spawn1.setY(loc.getY());
-			spawn1.setZ(loc.getZ());
-			spawn1.setYaw(loc.getYaw());
-			spawn1.setHeadPitch(loc.getPitch());
-			spawn1.setMetadata(data);
-			spawn1.sendPacket(player);
-			WrapperPlayServerSpawnEntityLiving spawn2 = new WrapperPlayServerSpawnEntityLiving();
-			spawn2.setEntityID(bossbarID2);
-			spawn2.setType(EntityType.WITHER);
-			loc = player.getLocation();
-			loc.subtract(loc.getDirection().multiply(distance));
-			spawn2.setX(loc.getX());
-			spawn2.setY(loc.getY());
-			spawn2.setZ(loc.getZ());
-			spawn2.setYaw(loc.getYaw());
-			spawn2.setHeadPitch(loc.getPitch());
-			spawn2.setMetadata(data);
-			spawn2.sendPacket(player);
-			player.sendMessage("aaaaaaa");
+			for(int i = 0; i < bossbarIds.length; i++)
+			{
+				WrapperPlayServerSpawnEntityLiving spawn = new WrapperPlayServerSpawnEntityLiving();
+				spawn.setEntityID(bossbarIds[i]);
+				spawn.setType(EntityType.WITHER);
+				spawn.setX(locs[i].getX());
+				spawn.setY(locs[i].getY());
+				spawn.setZ(locs[i].getZ());
+				spawn.setYaw(locs[i].getYaw());
+				spawn.setHeadPitch(locs[i].getPitch());
+				spawn.setMetadata(data);
+				spawn.sendPacket(player);
+			}
 		}
 		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this, 30);
 		if(info == null)
@@ -175,7 +127,7 @@ public class LinmaluBossbar implements Runnable
 		if(players.containsKey(player.getUniqueId()) && players.get(player.getUniqueId()).isTaskId(taskId))
 		{
 			WrapperPlayServerEntityDestroy remove = new WrapperPlayServerEntityDestroy();
-			remove.setEntityIds(new int[]{bossbarID1, bossbarID2});
+			remove.setEntityIds(bossbarIds);
 			remove.sendPacket(player);
 			players.remove(player.getUniqueId());
 		}
