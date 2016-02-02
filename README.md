@@ -1,9 +1,15 @@
 # LinmaluLibrary
 
- - author : Linmalu(린마루)
+ - author : 린마루(Linmalu)
  - HomePage : http://blog.linmalu.com/
- - Spigot : spigot-api-1.8.8-R0.1
- - Version : 1.05
+ - Language : JAVA
+ - Spigot : spigot-1.8.8-R0.1-SNAPSHOT
+ - Version : 1.07
+
+ ###업데이트
+- YML의 UTF-8방식으로 변환(기존에 있는 yml파일과는 호환이 되지 않습니다)
+- 표준화 방식을 이용하여 호환성을 추가
+- 기존에 있는 플러그인들과는 호환이 되지않습니다. 앞으로 업데이트되는 플러그인부터 적용이 됩니다.
 
 ###소개
 - 플러그인에 이용되는 기능들을 따로 분류한 플러그인입니다.
