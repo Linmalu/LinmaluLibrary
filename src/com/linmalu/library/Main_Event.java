@@ -17,8 +17,8 @@ public class Main_Event implements Listener
 		Player player = event.getPlayer();
 		if(player.isOp())
 		{
-			LinmaluVersion.check(LinmaluLibrary.getLinmaluLibrary(), player, LinmaluLibrary.getLinmaluLibrary().getTitle() + ChatColor.GREEN + "최신버전이 존재합니다.");
-			LinmaluMD5.check(LinmaluLibrary.getLinmaluLibrary(), player, LinmaluLibrary.getLinmaluLibrary().getTitle() + ChatColor.GREEN + "파일이 변조되었습니다.");
+			LinmaluVersion.check(LinmaluLibrary.getMain(), player, LinmaluLibrary.getMain().getTitle() + ChatColor.GREEN + "최신버전이 존재합니다.");
+			LinmaluMD5.check(LinmaluLibrary.getMain(), player, LinmaluLibrary.getMain().getTitle() + ChatColor.GREEN + "파일이 변조되었습니다.");
 		}
 	}
 }

@@ -17,7 +17,7 @@ public class LinmaluAutoRespawn implements Runnable
 	private LinmaluAutoRespawn(Player player)
 	{
 		this.player = player;
-		Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), this);
 	}
 	public void run()
 	{

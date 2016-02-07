@@ -1,28 +1,18 @@
 package com.linmalu.library;
 
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.linmalu.library.api.LinmaluMain;
 
-public class LinmaluLibrary extends JavaPlugin
+public class LinmaluLibrary extends LinmaluMain
 {
-	private static LinmaluLibrary linmaluLibrary;
-
+	@Override
 	public void onEnable()
 	{
-		linmaluLibrary = this;
-		getServer().getPluginManager().registerEvents(new Main_Event(), this);
+		registerEvents(new Main_Event());
 		getLogger().info("제작 : 린마루");
 	}
+	@Override
 	public void onDisable()
 	{
 		getLogger().info("제작 : 린마루");
-	}
-	public static LinmaluLibrary getLinmaluLibrary()
-	{
-		return linmaluLibrary;
-	}
-	public String getTitle()
-	{
-		return ChatColor.AQUA + "[" + getDescription().getDescription() + "] ";
 	}
 }

@@ -112,7 +112,7 @@ public class LinmaluBossbar implements Runnable
 				spawn.sendPacket(player);
 			}
 		}
-		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getLinmaluLibrary(), this, 30);
+		taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), this, 30);
 		if(info == null)
 		{
 			players.put(player.getUniqueId(), new PlayerInfo(player, taskId));

@@ -83,17 +83,15 @@ public class LinmaluTellraw
 	{
 		for(String cmd : items)
 		{
-			int i1, i2;
-			String sub;
 			while(true)
 			{
-				i1 = msg.indexOf(cmd);
-				i2 = msg.indexOf("$", i1 + 1);
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 +1);
 				boolean find = false;
 				for(int i = 1; i < 10; i++)
 				{
@@ -119,17 +117,15 @@ public class LinmaluTellraw
 	{
 		for(String cmd : texts)
 		{
-			int i1, i2;
-			String sub;
 			while(true)
 			{
-				i1 = msg.indexOf(cmd);
-				i2 = msg.indexOf("$", i1 + 1);
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 +1);
 				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -140,17 +136,15 @@ public class LinmaluTellraw
 	{
 		for(String cmd : cmds)
 		{
-			int i1, i2;
-			String sub;
 			while(true)
 			{
-				i1 = msg.indexOf(cmd);
-				i2 = msg.indexOf("$", i1 + 1);
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 +1);
 				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -161,17 +155,15 @@ public class LinmaluTellraw
 	{
 		for(String cmd : itemcmds)
 		{
-			int i1, i2;
-			String sub;
 			while(true)
 			{
-				i1 = msg.indexOf(cmd);
-				i2 = msg.indexOf("$", i1 + 1);
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 +1);
 				boolean find = false;
 				String ci = getCmdItem(sub.replace("$", "").replace("&", "§"));
 				String display = sub.split("\\|")[0];
@@ -199,17 +191,15 @@ public class LinmaluTellraw
 	{
 		for(String cmd : textcmds)
 		{
-			int i1, i2;
-			String sub;
 			while(true)
 			{
-				i1 = msg.indexOf(cmd);
-				i2 = msg.indexOf("$", i1 + 1);
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 +1);
 				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -220,17 +210,15 @@ public class LinmaluTellraw
 	{
 		for(String cmd : cmdchats)
 		{
-			int i1, i2;
-			String sub;
 			while(true)
 			{
-				i1 = msg.indexOf(cmd);
-				i2 = msg.indexOf("$", i1 + 1);
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 +1);
 				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
