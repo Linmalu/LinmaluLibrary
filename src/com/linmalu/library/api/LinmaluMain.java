@@ -15,14 +15,7 @@ public abstract class LinmaluMain extends JavaPlugin
 	{
 		try
 		{
-			for(StackTraceElement e : new Throwable().getStackTrace())
-			{
-				LinmaluMain main = mains.get(e.getClassName().split("\\.")[2]);
-				if(main != null)
-				{
-					return main;
-				}
-			}
+			return mains.get(new Throwable().getStackTrace()[1].getClassName().split("\\.")[2]);
 		}
 		catch(Exception e){}
 		return null;

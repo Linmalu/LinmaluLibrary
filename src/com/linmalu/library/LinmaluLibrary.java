@@ -8,11 +8,11 @@ public class LinmaluLibrary extends LinmaluMain
 	public void onEnable()
 	{
 		registerEvents(new Main_Event());
-		getLogger().info("제작 : 린마루");
+		getLogger().info("제작 : 린마루(Linmalu)");
 	}
 	@Override
 	public void onDisable()
 	{
-		getLogger().info("제작 : 린마루");
+		getLogger().info("제작 : 린마루(Linmalu)");
 	}
 }

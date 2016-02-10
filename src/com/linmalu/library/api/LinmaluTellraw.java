@@ -16,10 +16,16 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 public class LinmaluTellraw
 {
+	public static void sendCmdChatText(CommandSender sender, String cmd, String msg, String text)
+	{
+		new LinmaluTellraw("$CCT:" + msg + "|" + cmd + "|" + text + "$").changeCmdChatText().sendMessage(sender);
+	}
 	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
 	{
-		new LinmaluTellraw("$CC:" + msg + "|" + cmd + "$").changeCmdChat().sendMessage(sender);
+//		new LinmaluTellraw("$CC:" + msg + "|" + cmd + "$").changeCmdChat().sendMessage(sender);
+		sendCmdChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다.");
 	}
+	@Deprecated
 	public static void sendCmd(CommandSender sender, String cmd, String msg)
 	{
 		new LinmaluTellraw("$C:" + msg + "|" + cmd + "$").changeCmd().sendMessage(sender);
@@ -28,9 +34,10 @@ public class LinmaluTellraw
 	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
 	private final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
 	private final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
-	private final String[] itemcmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
-	private final String[] textcmds = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
-	private final String[] cmdchats = new String[]{"$CMDCHAT:", "$CC:", "$명령어채팅:"};
+	private final String[] itemCmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
+	private final String[] textCmds = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
+	private final String[] cmdChats = new String[]{"$CMDCHAT:", "$CC:", "$명령어채팅:"};
+	private final String[] cmdChatTexts = new String[]{"$CMDCHATTEXT:", "$CCT:", "$명령어채팅텍스트:"};
 	private boolean change = false;
 	private String msg;
 
@@ -153,7 +160,7 @@ public class LinmaluTellraw
 	}
 	public LinmaluTellraw changeCmdItem(Player player)
 	{
-		for(String cmd : itemcmds)
+		for(String cmd : itemCmds)
 		{
 			while(true)
 			{
@@ -189,7 +196,7 @@ public class LinmaluTellraw
 	}
 	public LinmaluTellraw changeCmdText()
 	{
-		for(String cmd : textcmds)
+		for(String cmd : textCmds)
 		{
 			while(true)
 			{
@@ -208,7 +215,7 @@ public class LinmaluTellraw
 	}
 	public LinmaluTellraw changeCmdChat()
 	{
-		for(String cmd : cmdchats)
+		for(String cmd : cmdChats)
 		{
 			while(true)
 			{
@@ -220,6 +227,25 @@ public class LinmaluTellraw
 				}
 				String sub = msg.substring(i1, i2 +1);
 				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				change = true;
+			}
+		}
+		return this;
+	}
+	public LinmaluTellraw changeCmdChatText()
+	{
+		for(String cmd : cmdChatTexts)
+		{
+			while(true)
+			{
+				int i1 = msg.indexOf(cmd);
+				int i2 = msg.indexOf("$", i1 + 1);
+				if(i1 == -1 || i2 == -1)
+				{
+					break;
+				}
+				String sub = msg.substring(i1, i2 +1);
+				msg = msg.replace(sub, getCmdChatText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -404,5 +430,28 @@ public class LinmaluTellraw
 			msg = "";
 		}
 		return "\"}, {text:\"" + display + "\"" + msg + "}, {text:\"";
+	}
+	private String getCmdChatText(String msg)
+	{
+		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
+		String display = msgs[0];
+		String cmd;
+		if(msgs.length > 1)
+		{
+			cmd = ", clickEvent:{action:suggest_command, value:\"" + msgs[1] + "\"}";
+		}
+		else
+		{
+			cmd = "";
+		}
+		if(msgs.length > 2)
+		{
+			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|" + msgs[1] + "|", "") + "\"}}";
+		}
+		else
+		{
+			msg = "";
+		}
+		return "\"}, {text:\"" + display + "\"" + cmd + msg + "}, {text:\"";
 	}
 }

@@ -5,11 +5,17 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 public class LinmaluVersion implements Runnable
 {
+	public static void check(LinmaluMain plugin, CommandSender sender)
+	{
+		check(plugin, sender, plugin.getTitle() + ChatColor.GREEN + "최신버전이 존재합니다.");
+	}
+	@Deprecated
 	public static void check(Plugin plugin, CommandSender sender, String msg)
 	{
 		new LinmaluVersion(plugin, sender, msg);
