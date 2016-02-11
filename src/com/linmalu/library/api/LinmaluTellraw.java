@@ -16,28 +16,35 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 public class LinmaluTellraw
 {
-	public static void sendCmdChatText(CommandSender sender, String cmd, String msg, String text)
+	public static void sendChatText(CommandSender sender, String cmd, String msg, String text)
 	{
-		new LinmaluTellraw("$CCT:" + msg + "|" + cmd + "|" + text + "$").changeCmdChatText().sendMessage(sender);
+		new LinmaluTellraw("$AT:" + msg + "|" + cmd + "|" + text + "$").changeChatText().sendMessage(sender);
 	}
-	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
+	public static void sendChat(CommandSender sender, String cmd, String msg)
 	{
-//		new LinmaluTellraw("$CC:" + msg + "|" + cmd + "$").changeCmdChat().sendMessage(sender);
-		sendCmdChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다.");
+		sendChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다.");
 	}
 	@Deprecated
+	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
+	{
+		sendChat(sender, cmd, msg);
+	}
+	public static void sendCmdText(CommandSender sender, String cmd, String msg, String text)
+	{
+		new LinmaluTellraw("$CT:" + msg + "|" + cmd + "|" + text + "$").changeCmd().sendMessage(sender);
+	}
 	public static void sendCmd(CommandSender sender, String cmd, String msg)
 	{
-		new LinmaluTellraw("$C:" + msg + "|" + cmd + "$").changeCmd().sendMessage(sender);
+		sendCmdText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다.");
 	}
 
 	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
 	private final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
 	private final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
+	private final String[] chats = new String[]{"$CHAT:", "$A:", "$채팅:" , "$CC"}; //$CC 호환성
 	private final String[] itemCmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
-	private final String[] textCmds = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
-	private final String[] cmdChats = new String[]{"$CMDCHAT:", "$CC:", "$명령어채팅:"};
-	private final String[] cmdChatTexts = new String[]{"$CMDCHATTEXT:", "$CCT:", "$명령어채팅텍스트:"};
+	private final String[] cmdTexts = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
+	private final String[] chatTexts = new String[]{"$CHATTEXT:", "$AT:", "$채팅텍스트:"};
 	private boolean change = false;
 	private String msg;
 
@@ -196,7 +203,7 @@ public class LinmaluTellraw
 	}
 	public LinmaluTellraw changeCmdText()
 	{
-		for(String cmd : textCmds)
+		for(String cmd : cmdTexts)
 		{
 			while(true)
 			{
@@ -213,9 +220,9 @@ public class LinmaluTellraw
 		}
 		return this;
 	}
-	public LinmaluTellraw changeCmdChat()
+	public LinmaluTellraw changeChat()
 	{
-		for(String cmd : cmdChats)
+		for(String cmd : chats)
 		{
 			while(true)
 			{
@@ -226,15 +233,15 @@ public class LinmaluTellraw
 					break;
 				}
 				String sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmdChat(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				msg = msg.replace(sub, getChat(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
 		return this;
 	}
-	public LinmaluTellraw changeCmdChatText()
+	public LinmaluTellraw changeChatText()
 	{
-		for(String cmd : cmdChatTexts)
+		for(String cmd : chatTexts)
 		{
 			while(true)
 			{
@@ -245,7 +252,7 @@ public class LinmaluTellraw
 					break;
 				}
 				String sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getCmdChatText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				msg = msg.replace(sub, getChatText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -417,7 +424,7 @@ public class LinmaluTellraw
 		}
 		return "\"}, {text:\"" + display + "\"" + cmd + msg + "}, {text:\"";
 	}
-	private String getCmdChat(String msg)
+	private String getChat(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		String display = msgs[0];
@@ -431,7 +438,7 @@ public class LinmaluTellraw
 		}
 		return "\"}, {text:\"" + display + "\"" + msg + "}, {text:\"";
 	}
-	private String getCmdChatText(String msg)
+	private String getChatText(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		String display = msgs[0];
