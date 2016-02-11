@@ -41,7 +41,7 @@ public class LinmaluTellraw
 	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
 	private final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
 	private final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
-	private final String[] chats = new String[]{"$CHAT:", "$A:", "$채팅:" , "$CC"}; //$CC 호환성
+	private final String[] chats = new String[]{"$CHAT:", "$A:", "$채팅:" , "$CC:"}; //$CC 호환성
 	private final String[] itemCmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
 	private final String[] cmdTexts = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
 	private final String[] chatTexts = new String[]{"$CHATTEXT:", "$AT:", "$채팅텍스트:"};
@@ -219,6 +219,11 @@ public class LinmaluTellraw
 			}
 		}
 		return this;
+	}
+	@Deprecated
+	public LinmaluTellraw changeCmdChat()
+	{
+		return changeChat();
 	}
 	public LinmaluTellraw changeChat()
 	{
