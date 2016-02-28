@@ -51,16 +51,6 @@ public class LinmaluPlayer implements Runnable
 		UUID uuid = skin == null ? null : Bukkit.getOfflinePlayer(skin).getUniqueId();
 		new LinmaluPlayer(uuid, new LinmaluPacket(player, name, uuid));
 	}
-	@SuppressWarnings("deprecation")
-	public static Multimap<String, WrappedSignedProperty> getWrappedSignedPropertys(String name)
-	{
-		UUID uuid = Bukkit.getOfflinePlayer(name).getUniqueId();
-		if(!profiles.containsKey(uuid))
-		{
-			new LinmaluPlayer(uuid, null);
-		}
-		return profiles.get(uuid).getWrappedSignedProperty();
-	}
 
 	private UUID uuid;
 	private Runnable runnable;
@@ -101,6 +91,13 @@ public class LinmaluPlayer implements Runnable
 				}
 				else if(huc.getResponseCode() == 429)
 				{
+					if(!profiles.get(uuid).isWrappedSignedProperty())
+					{
+						Thread.sleep(10000);
+						profiles.get(uuid).time = 0;
+						run();
+						return;
+					}
 					profiles.get(uuid).time = System.currentTimeMillis() - 590000;
 				}
 			}
@@ -130,50 +127,53 @@ public class LinmaluPlayer implements Runnable
 		@SuppressWarnings("deprecation")
 		public void run()
 		{
-			WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
-			info.setAction(PlayerInfoAction.ADD_PLAYER);
-			WrappedGameProfile profile = name != null ? new WrappedGameProfile(player.getUniqueId(), name) : WrappedGameProfile.fromPlayer(player);
-			profile.getProperties().putAll(uuid != null && profiles.get(uuid).isWrappedSignedProperty() ? profiles.get(uuid).getWrappedSignedProperty() : WrappedGameProfile.fromPlayer(player).getProperties());
-			info.setData(Arrays.asList(new PlayerInfoData(profile, 0, NativeGameMode.fromBukkit(player.getGameMode()), WrappedChatComponent.fromText(profile.getName()))));
-			WrapperPlayServerRespawn respawn = new WrapperPlayServerRespawn();
-			respawn.setDifficulty(Difficulty.valueOf(player.getWorld().getDifficulty().toString()));
-			respawn.setDimension(player.getWorld().getEnvironment().getId());
-			respawn.setGamemode(NativeGameMode.fromBukkit(player.getGameMode()));
-			respawn.setLevelType(player.getWorld().getWorldType());
-			WrapperPlayServerAbilities abilities = new WrapperPlayServerAbilities();
-			abilities.setCanFly(player.getAllowFlight());
-			//abilities.setCanInstantlyBuild(false);
-			abilities.setFlying(player.isFlying());
-			abilities.setFlyingSpeed(player.getFlySpeed() / 2);
-			//abilities.setInvulnurable(false);
-			abilities.setWalkingSpeed(player.getWalkSpeed() / 2);
-			WrapperPlayServerUpdateHealth health = new WrapperPlayServerUpdateHealth();
-			health.setFood(player.getFoodLevel());
-			health.setFoodSaturation(player.getSaturation());
-			health.setHealth((float)player.getHealth());
-			WrapperPlayServerExperience exp = new WrapperPlayServerExperience();
-			exp.setExperienceBar(player.getExp());
-			exp.setLevel(player.getLevel());
-			exp.setTotalExperience(player.getTotalExperience());
-			WrapperPlayServerHeldItemSlot slot = new WrapperPlayServerHeldItemSlot();
-			slot.setSlot(player.getInventory().getHeldItemSlot());
-			for(Player p : Bukkit.getOnlinePlayers())
+			if(player != null && player.isOnline())
 			{
-				info.sendPacket(p);
+				WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
+				info.setAction(PlayerInfoAction.ADD_PLAYER);
+				WrappedGameProfile profile = name != null ? new WrappedGameProfile(player.getUniqueId(), name) : WrappedGameProfile.fromPlayer(player);
+				profile.getProperties().putAll(uuid != null && profiles.get(uuid).isWrappedSignedProperty() ? profiles.get(uuid).getWrappedSignedProperty() : WrappedGameProfile.fromPlayer(player).getProperties());
+				info.setData(Arrays.asList(new PlayerInfoData(profile, 0, NativeGameMode.fromBukkit(player.getGameMode()), WrappedChatComponent.fromText(profile.getName()))));
+				WrapperPlayServerRespawn respawn = new WrapperPlayServerRespawn();
+				respawn.setDifficulty(Difficulty.valueOf(player.getWorld().getDifficulty().toString()));
+				respawn.setDimension(player.getWorld().getEnvironment().getId());
+				respawn.setGamemode(NativeGameMode.fromBukkit(player.getGameMode()));
+				respawn.setLevelType(player.getWorld().getWorldType());
+				WrapperPlayServerAbilities abilities = new WrapperPlayServerAbilities();
+				abilities.setCanFly(player.getAllowFlight());
+				//abilities.setCanInstantlyBuild(false);
+				abilities.setFlying(player.isFlying());
+				abilities.setFlyingSpeed(player.getFlySpeed() / 2);
+				//abilities.setInvulnurable(false);
+				abilities.setWalkingSpeed(player.getWalkSpeed() / 2);
+				WrapperPlayServerUpdateHealth health = new WrapperPlayServerUpdateHealth();
+				health.setFood(player.getFoodLevel());
+				health.setFoodSaturation(player.getSaturation());
+				health.setHealth((float)player.getHealth());
+				WrapperPlayServerExperience exp = new WrapperPlayServerExperience();
+				exp.setExperienceBar(player.getExp());
+				exp.setLevel(player.getLevel());
+				exp.setTotalExperience(player.getTotalExperience());
+				WrapperPlayServerHeldItemSlot slot = new WrapperPlayServerHeldItemSlot();
+				slot.setSlot(player.getInventory().getHeldItemSlot());
+				for(Player p : Bukkit.getOnlinePlayers())
+				{
+					info.sendPacket(p);
+				}
+				respawn.sendPacket(player);
+				abilities.sendPacket(player);
+				health.sendPacket(player);
+				exp.sendPacket(player);
+				slot.sendPacket(player);
+				player.getWorld().refreshChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+				player.teleport(player);
+				player.updateInventory();
+				for(PotionEffect pe : player.getActivePotionEffects())
+				{
+					player.addPotionEffect(pe, true);
+				}
+				ProtocolLibrary.getProtocolManager().updateEntity(player, ProtocolLibrary.getProtocolManager().getEntityTrackers(player));
 			}
-			respawn.sendPacket(player);
-			abilities.sendPacket(player);
-			health.sendPacket(player);
-			exp.sendPacket(player);
-			slot.sendPacket(player);
-			player.getWorld().refreshChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
-			player.teleport(player);
-			player.updateInventory();
-			for(PotionEffect pe : player.getActivePotionEffects())
-			{
-				player.addPotionEffect(pe, true);
-			}
-			ProtocolLibrary.getProtocolManager().updateEntity(player, ProtocolLibrary.getProtocolManager().getEntityTrackers(player));
 		}
 	}
 	private class LinmaluProfile
