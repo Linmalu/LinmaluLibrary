@@ -22,7 +22,7 @@ public class LinmaluTellraw
 	}
 	public static void sendChat(CommandSender sender, String cmd, String msg)
 	{
-		sendChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다.");
+		sendChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 채팅에 입력됩니다." + ChatColor.GRAY + " - " + ChatColor.GOLD + cmd);
 	}
 	@Deprecated
 	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
@@ -35,7 +35,7 @@ public class LinmaluTellraw
 	}
 	public static void sendCmd(CommandSender sender, String cmd, String msg)
 	{
-		sendCmdText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다.");
+		sendCmdText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다." + ChatColor.GRAY + " - " + ChatColor.GOLD + cmd);
 	}
 
 	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
