@@ -31,7 +31,7 @@ public class LinmaluTellraw
 	}
 	public static void sendCmdText(CommandSender sender, String cmd, String msg, String text)
 	{
-		new LinmaluTellraw("$CT:" + msg + "|" + cmd + "|" + text + "$").changeCmd().sendMessage(sender);
+		new LinmaluTellraw("$CT:" + msg + "|" + cmd + "|" + text + "$").changeCmdText().sendMessage(sender);
 	}
 	public static void sendCmd(CommandSender sender, String cmd, String msg)
 	{
