@@ -12,7 +12,7 @@ public class LinmaluAutoRespawn implements Runnable
 		new LinmaluAutoRespawn(player);
 	}
 
-	private Player player;
+	private final Player player;
 
 	private LinmaluAutoRespawn(Player player)
 	{

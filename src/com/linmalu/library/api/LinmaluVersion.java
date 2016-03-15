@@ -21,12 +21,12 @@ public class LinmaluVersion implements Runnable
 		new LinmaluVersion(plugin, sender, msg);
 	}
 
+	private final Plugin plugin;
+	private final CommandSender sender;
+	private final String msg;
+	private final String url;
+	private final float version;
 	private boolean check = true;
-	private Plugin plugin;
-	private CommandSender sender;
-	private String msg;
-	private String url;
-	private float version;
 
 	private LinmaluVersion(Plugin plugin, CommandSender sender, String msg)
 	{

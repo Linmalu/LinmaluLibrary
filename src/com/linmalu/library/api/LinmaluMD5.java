@@ -18,12 +18,12 @@ public class LinmaluMD5 implements Runnable
 		new LinmaluMD5(plugin, sender, msg);
 	}
 
+	private final Plugin plugin;
+	private final CommandSender sender;
+	private final String msg;
+	private final File file;
+	private final String url;
 	private boolean check = true;
-	private Plugin plugin;
-	private CommandSender sender;
-	private String msg;
-	private File file;
-	private String url;
 
 	private LinmaluMD5(Plugin plugin, CommandSender sender, String msg)
 	{

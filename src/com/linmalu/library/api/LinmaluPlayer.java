@@ -52,8 +52,8 @@ public class LinmaluPlayer implements Runnable
 		new LinmaluPlayer(uuid, new LinmaluPacket(player, name, uuid));
 	}
 
-	private UUID uuid;
-	private Runnable runnable;
+	private final UUID uuid;
+	private final Runnable runnable;
 
 	private LinmaluPlayer(UUID uuid, Runnable runnable)
 	{

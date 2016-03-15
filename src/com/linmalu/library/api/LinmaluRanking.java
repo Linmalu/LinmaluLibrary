@@ -21,8 +21,8 @@ public class LinmaluRanking<T extends Number> implements Comparator<String>
 		return ranking;
 	}
 
-	private Map<String, T> base;
-	private boolean ascendingOrder;
+	private final Map<String, T> base;
+	private final boolean ascendingOrder;
 
 	private LinmaluRanking(HashMap<String, T> map, boolean ascendingOrder)
 	{

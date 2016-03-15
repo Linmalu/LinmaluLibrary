@@ -21,8 +21,8 @@ import com.linmalu.library.LinmaluLibrary;
 
 public class LinmaluBossbar implements Runnable
 {
-	private static int[] bossbarIds = {0, 0, 0, 0, 0 ,0};
-	private static HashMap<UUID, PlayerInfo> players = new HashMap<>(); 
+	private static final int[] bossbarIds = {0, 0, 0, 0, 0 ,0};
+	private static final HashMap<UUID, PlayerInfo> players = new HashMap<>(); 
 
 	public static void sendMessage(String message)
 	{
@@ -47,8 +47,8 @@ public class LinmaluBossbar implements Runnable
 		new LinmaluBossbar(player, message, health);
 	}
 
-	private int taskId;
-	private Player player;
+	private final int taskId;
+	private final Player player;
 	private final int distance = 100;
 
 	private LinmaluBossbar(Player player, String message, float health)
