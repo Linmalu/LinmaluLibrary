@@ -2,41 +2,40 @@ package com.linmalu.library.api;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class LinmaluRanking<T extends Number> implements Comparator<String>
+public class LinmaluRanking<K, V extends Number> implements Comparator<K>
 {
-	public static <T extends Number> LinkedHashMap<String, T> getRanking(HashMap<String, T> map, boolean ascendingOrder)
+	public static <K, V extends Number> LinkedHashMap<K, V> getRanking(Map<K, V> map, boolean ascendingOrder)
 	{
-		TreeMap<String, T> key = new TreeMap<>(new LinmaluRanking<T>(map, ascendingOrder));
+		TreeMap<K, V> key = new TreeMap<>(new LinmaluRanking<K, V>(map, ascendingOrder));
 		key.putAll(map);
-		LinkedHashMap<String, T> ranking = new LinkedHashMap<>();
-		for(String name : key.keySet())
+		LinkedHashMap<K, V> ranking = new LinkedHashMap<>();
+		for(K name : key.keySet())
 		{
 			ranking.put(name, map.get(name));
 		}
 		return ranking;
 	}
 
-	private final Map<String, T> base;
+	private final Map<K, V> map;
 	private final boolean ascendingOrder;
 
-	private LinmaluRanking(HashMap<String, T> map, boolean ascendingOrder)
+	private LinmaluRanking(Map<K, V> map, boolean ascendingOrder)
 	{
-		this.base = map;
+		this.map = map;
 		this.ascendingOrder = ascendingOrder;
 	}
 	@Override
-	public int compare(String a, String b)
+	public int compare(K a, K b)
 	{
-		int compare = new BigDecimal(base.get(a).toString()).compareTo(new BigDecimal(base.get(b).toString()));
+		int compare = new BigDecimal(String.valueOf(map.get(a))).compareTo(new BigDecimal(String.valueOf(map.get(b))));
 		if(compare == 0)
 		{
 			compare = 1;
 		}
-		return ascendingOrder ? compare : compare * -1;
+		return ascendingOrder ? compare : -compare;
 	}
 }

@@ -51,14 +51,9 @@ public class LinmaluYamlConfiguration extends YamlConfiguration
 		Validate.notNull(file, "File cannot be null");
 		Files.createParentDirs(file);
 		String data = saveToString();
-		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
-		try
+		try(Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8))
 		{
 			writer.write(data);
-		}
-		finally
-		{
-			writer.close();
 		}
 	}
 	@Override
