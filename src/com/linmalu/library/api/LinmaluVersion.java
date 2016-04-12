@@ -23,47 +23,27 @@ public class LinmaluVersion implements Runnable
 
 	private final Plugin plugin;
 	private final CommandSender sender;
-	private final String msg;
-	private final String url;
-	private final float version;
-	private boolean check = true;
+	private final String message;
 
-	private LinmaluVersion(Plugin plugin, CommandSender sender, String msg)
+	private LinmaluVersion(Plugin plugin, CommandSender sender, String message)
 	{
 		this.plugin = plugin;
 		this.sender = sender;
-		this.msg = msg;
-		url = "http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/version";
-		version = Float.parseFloat(plugin.getDescription().getVersion());
+		this.message = message;
 		new Thread(this).start();
 	}
 	public void run()
 	{
-		if(check)
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/version").openStream())))
 		{
-			try
+			String msg = br.readLine();
+			if(msg !=null && !msg.equals(plugin.getDescription().getVersion()))
 			{
-				BufferedReader br = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-				String msg;
-				while((msg = br.readLine()) != null)
-				{
-					if(version < Float.parseFloat(msg))
-					{
-						check = false;
-						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this);
-						br.close();
-						return;
-					}
-				}
-				br.close();
-			}
-			catch(Exception e)
-			{
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> sender.sendMessage(message));
 			}
 		}
-		else
+		catch(Exception e)
 		{
-			sender.sendMessage(msg);
 		}
 	}
 }

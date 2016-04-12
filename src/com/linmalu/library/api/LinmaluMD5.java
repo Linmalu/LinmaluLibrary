@@ -1,10 +1,10 @@
 package com.linmalu.library.api;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 
 import org.bukkit.Bukkit;
@@ -20,62 +20,32 @@ public class LinmaluMD5 implements Runnable
 
 	private final Plugin plugin;
 	private final CommandSender sender;
-	private final String msg;
-	private final File file;
-	private final String url;
-	private boolean check = true;
+	private final String message;
 
-	private LinmaluMD5(Plugin plugin, CommandSender sender, String msg)
+	private LinmaluMD5(Plugin plugin, CommandSender sender, String message)
 	{
 		this.plugin = plugin;
 		this.sender = sender;
-		this.msg = msg;
-		file = new File(plugin.getDataFolder() + ".jar");
-		url = "http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/" + plugin.getDescription().getVersion();
+		this.message = message;
 		new Thread(this).start();
 	}
 	public void run()
 	{
-		if(check)
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/" + plugin.getDescription().getVersion()).openStream())))
 		{
-			try
+			StringBuilder md5 = new StringBuilder();
+			for(byte b : MessageDigest.getInstance("MD5").digest(Files.readAllBytes(Paths.get(plugin.getDataFolder() + ".jar"))))
 			{
-				MessageDigest md = MessageDigest.getInstance("MD5");
-				byte[] b = new byte[1024];
-				FileInputStream fis = new FileInputStream(file);
-				int read; 
-				while ((read = fis.read(b)) != -1)
-				{
-					md.update(b, 0, read);
-				}
-				fis.close();
-				b = md.digest();
-				StringBuilder md5 = new StringBuilder();
-				for (int i = 0; i < b.length; i++)
-				{
-					md5.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));
-				}
-				BufferedReader br = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-				String msg;
-				while((msg = br.readLine()) != null)
-				{
-					if(!msg.equals(md5.toString()))
-					{
-						check = false;
-						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this);
-						br.close();
-						return;
-					}
-				}
-				br.close();
+				md5.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
 			}
-			catch(Exception e)
+			String msg = br.readLine();
+			if(msg != null && !msg.equals(md5.toString()))
 			{
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> sender.sendMessage(message));
 			}
 		}
-		else
+		catch(Exception e)
 		{
-			sender.sendMessage(msg);
 		}
 	}
 }
