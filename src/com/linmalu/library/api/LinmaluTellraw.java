@@ -23,7 +23,14 @@ public class LinmaluTellraw
 	}
 	public static void sendChat(CommandSender sender, String cmd, String msg)
 	{
-		sendChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 채팅에 입력됩니다." + ChatColor.GRAY + " - " + ChatColor.GOLD + cmd);
+		if(sender instanceof Player)
+		{
+			sendChatText(sender, cmd, msg, ChatColor.GREEN + "클릭시 채팅에 입력됩니다." + ChatColor.GRAY + " - " + ChatColor.GOLD + cmd);
+		}
+		else
+		{
+			sender.sendMessage(msg);
+		}
 	}
 	@Deprecated
 	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
