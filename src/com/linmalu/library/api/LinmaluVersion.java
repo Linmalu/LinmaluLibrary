@@ -34,7 +34,7 @@ public class LinmaluVersion implements Runnable
 	}
 	public void run()
 	{
-		try(BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/version").openStream())))
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/version1").openStream())))
 		{
 			String msg = br.readLine();
 			if(msg !=null && !msg.equals(plugin.getDescription().getVersion()))

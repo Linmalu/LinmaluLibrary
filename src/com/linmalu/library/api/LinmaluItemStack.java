@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -80,10 +81,14 @@ public enum LinmaluItemStack
 		}
 		return true;
 	}
-	public static ItemStack getItemStack(Material type, int amount, int damage, String name, String ... lore)
+	public static ItemStack getItemStack(Material type, int amount, int damage, boolean hideFlag, String name, String ... lore)
 	{
 		ItemStack item = new ItemStack(type, amount, (short)damage);
 		ItemMeta im = item.getItemMeta();
+		if(hideFlag)
+		{
+			im.addItemFlags(ItemFlag.values());
+		}
 		im.setDisplayName(name);
 		if(!(lore.length == 1 && lore[0].equals("")))
 		{

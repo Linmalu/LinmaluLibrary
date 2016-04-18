@@ -12,10 +12,7 @@ public class LinmaluActionbar
 
 	public static void sendMessage(String message)
 	{
-		for(Player player : Bukkit.getOnlinePlayers())
-		{
-			sendMessage(player, message);
-		}
+		Bukkit.getOnlinePlayers().forEach(player -> sendMessage(player, message));
 	}
 	public static void sendMessage(Player player, String message)
 	{

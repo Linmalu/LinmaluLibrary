@@ -26,17 +26,11 @@ public class LinmaluBossbar implements Runnable
 
 	public static void sendMessage(String message)
 	{
-		for(Player player : Bukkit.getOnlinePlayers())
-		{
-			sendMessage(player, message, 100);
-		}
+		Bukkit.getOnlinePlayers().forEach(player -> sendMessage(player, message, 100));
 	}
 	public static void sendMessage(String message, float health)
 	{
-		for(Player player : Bukkit.getOnlinePlayers())
-		{
-			sendMessage(player, message, health);
-		}
+		Bukkit.getOnlinePlayers().forEach(player -> sendMessage(player, message, health));
 	}
 	public static void sendMessage(Player player, String message)
 	{

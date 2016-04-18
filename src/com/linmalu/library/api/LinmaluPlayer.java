@@ -156,10 +156,7 @@ public class LinmaluPlayer implements Runnable
 				exp.setTotalExperience(player.getTotalExperience());
 				WrapperPlayServerHeldItemSlot slot = new WrapperPlayServerHeldItemSlot();
 				slot.setSlot(player.getInventory().getHeldItemSlot());
-				for(Player p : Bukkit.getOnlinePlayers())
-				{
-					info.sendPacket(p);
-				}
+				Bukkit.getOnlinePlayers().forEach(player -> info.sendPacket(player));
 				respawn.sendPacket(player);
 				abilities.sendPacket(player);
 				health.sendPacket(player);
