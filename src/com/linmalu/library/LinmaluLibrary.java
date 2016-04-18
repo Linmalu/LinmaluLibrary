@@ -7,12 +7,7 @@ public class LinmaluLibrary extends LinmaluMain
 	@Override
 	public void onEnable()
 	{
+		super.onEnable();
 		registerEvents(new Main_Event());
-		getLogger().info("제작 : 린마루(Linmalu)");
-	}
-	@Override
-	public void onDisable()
-	{
-		getLogger().info("제작 : 린마루(Linmalu)");
 	}
 }

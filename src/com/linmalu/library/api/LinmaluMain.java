@@ -2,6 +2,7 @@ package com.linmalu.library.api;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
@@ -24,6 +25,17 @@ public abstract class LinmaluMain extends JavaPlugin
 	public void onLoad()
 	{
 		mains.put(getClass().getPackage().getName().split("\\.")[2], this);
+	}
+	@Override
+	public void onEnable()
+	{
+		getLogger().info("제작 : 린마루(Linmalu)");
+		LinmaluVersion.check(this, Bukkit.getConsoleSender());
+	}
+	@Override
+	public void onDisable()
+	{
+		getLogger().info("제작 : 린마루(Linmalu)");
 	}
 	public String getTitle()
 	{
