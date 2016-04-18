@@ -2,15 +2,16 @@
 
  - author : 린마루(Linmalu)
  - HomePage : http://blog.linmalu.com/
- - Language : JAVA
+ - Language : JAVA8
  - Spigot : spigot-1.8.8-R0.1-SNAPSHOT
- - Version : 1.12
+ - Version : 1.8.8.0
  
  ###업데이트
 - 기능업데이트
 
 ###소개
 - 플러그인에 이용되는 기능들을 따로 분류한 플러그인입니다.
+- 플러그인은 JAVA8버전이 필요합니다.
 - 플러그인은 ProtocolLib 플러그인이 필요합니다. 없을 경우에는 플러그인이 작동하지 않습니다.
 - ProtocolLib 플러그인 : https://www.spigotmc.org/resources/protocollib.1997/
 - 플러그인은 spigot-1.8.8-R0.1-SNAPSHOT을 이용하여 제작되었으며 1.8.X 버전에서만 사용할 수 있습니다.
