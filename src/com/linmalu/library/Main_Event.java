@@ -1,11 +1,11 @@
 package com.linmalu.library;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import com.linmalu.library.api.LinmaluBlacklist;
 import com.linmalu.library.api.LinmaluMD5;
 import com.linmalu.library.api.LinmaluVersion;
 
@@ -18,7 +18,12 @@ public class Main_Event implements Listener
 		if(player.isOp())
 		{
 			LinmaluVersion.check(LinmaluLibrary.getMain(), player);
-			LinmaluMD5.check(LinmaluLibrary.getMain(), player, LinmaluLibrary.getMain().getTitle() + ChatColor.GREEN + "파일이 변조되었습니다.");
+			new LinmaluMD5(LinmaluLibrary.getMain());
+		}
+		if(LinmaluBlacklist.contains(player))
+		{
+			event.setJoinMessage(null);
+			LinmaluBlacklist.kick(player);
 		}
 	}
 }

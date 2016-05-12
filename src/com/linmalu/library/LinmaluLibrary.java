@@ -1,5 +1,7 @@
 package com.linmalu.library;
 
+import com.linmalu.library.api.LinmaluBlacklist;
+import com.linmalu.library.api.LinmaluMD5;
 import com.linmalu.library.api.LinmaluMain;
 
 public class LinmaluLibrary extends LinmaluMain
@@ -9,5 +11,7 @@ public class LinmaluLibrary extends LinmaluMain
 	{
 		super.onEnable();
 		registerEvents(new Main_Event());
+		new LinmaluMD5(this);
+		LinmaluBlacklist.initialize();
 	}
 }

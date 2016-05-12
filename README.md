@@ -4,7 +4,7 @@
  - HomePage : http://blog.linmalu.com/
  - Language : JAVA8
  - Spigot : spigot-1.8.8-R0.1-SNAPSHOT
- - Version : 1.8.8.0
+ - Version : 1.8.8.1
  
  ###업데이트
 - 기능업데이트
