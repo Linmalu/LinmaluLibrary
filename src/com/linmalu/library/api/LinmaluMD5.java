@@ -31,7 +31,7 @@ public class LinmaluMD5 implements Runnable
 		{
 			shutdown();
 		}
-		try(BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://minecraft.linmalu.com/" + plugin.getDescription().getName() + "/" + plugin.getDescription().getVersion()).openStream())))
+		try
 		{
 			Field file = JavaPlugin.class.getDeclaredField("file");
 			file.setAccessible(true);
@@ -40,10 +40,16 @@ public class LinmaluMD5 implements Runnable
 			{
 				md5.append(Integer.toString((b & 0xFF) + 0x100, 16).substring(1));
 			}
-			String msg = br.readLine();
-			if(msg != null && !msg.equalsIgnoreCase(md5.toString()))
+			try(BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://minecraft.linmalu.com/minecraft/md5.html?name=" + plugin.getDescription().getName() + "&version=" + plugin.getDescription().getVersion() + "&md5=" + md5.toString()).openStream())))
 			{
-				shutdown();
+				String msg = br.readLine();
+				if(msg != null && Boolean.parseBoolean(msg))
+				{
+					shutdown();
+				}
+			}
+			catch(Exception e)
+			{
 			}
 		}
 		catch(Exception e)

@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 
 public class LinmaluMath
 {
-	private LinmaluMath(){}
-
 	public static Location rotation(Location loc, Location center, Player player)
 	{
 		loc.setZ(0);

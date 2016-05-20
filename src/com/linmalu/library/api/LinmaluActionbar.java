@@ -8,17 +8,15 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class LinmaluActionbar
 {
-	private LinmaluActionbar(){}
-
 	public static void sendMessage(String message)
 	{
 		Bukkit.getOnlinePlayers().forEach(player -> sendMessage(player, message));
 	}
 	public static void sendMessage(Player player, String message)
 	{
-		WrapperPlayServerChat psc = new WrapperPlayServerChat();
-		psc.setPosition((byte)2);
-		psc.setMessage(WrappedChatComponent.fromText(message));
-		psc.sendPacket(player);
+		WrapperPlayServerChat packet = new WrapperPlayServerChat();
+		packet.setPosition((byte)2);
+		packet.setMessage(WrappedChatComponent.fromText(message));
+		packet.sendPacket(player);
 	}
 }

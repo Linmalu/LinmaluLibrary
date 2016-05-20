@@ -32,11 +32,6 @@ public class LinmaluTellraw
 			sender.sendMessage(msg);
 		}
 	}
-	@Deprecated
-	public static void sendCmdChat(CommandSender sender, String cmd, String msg)
-	{
-		sendChat(sender, cmd, msg);
-	}
 	public static void sendCmdText(CommandSender sender, String cmd, String msg, String text)
 	{
 		new LinmaluTellraw("$CT:" + msg + "|" + cmd + "|" + text + "$").changeCmdText().sendMessage(sender);
@@ -49,7 +44,6 @@ public class LinmaluTellraw
 	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
 	private final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
 	private final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
-	private final String[] chats = new String[]{"$CHAT:", "$A:", "$채팅:" , "$CC:"}; //$CC 호환성
 	private final String[] itemCmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
 	private final String[] cmdTexts = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
 	private final String[] chatTexts = new String[]{"$CHATTEXT:", "$AT:", "$채팅텍스트:"};
@@ -128,7 +122,7 @@ public class LinmaluTellraw
 				if(!find)
 				{
 					String display = sub.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "§");
-					msg = msg.replace(sub, getItem(player.getItemInHand(), display, ""));
+					msg = msg.replace(sub, getItem(player.getInventory().getItemInMainHand(), display, ""));
 				}
 				change = true;
 			}
@@ -202,7 +196,7 @@ public class LinmaluTellraw
 				if(!find)
 				{
 					display = display.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "§");
-					msg = msg.replace(sub, getItem(player.getItemInHand(), display, ci));
+					msg = msg.replace(sub, getItem(player.getInventory().getItemInMainHand(), display, ci));
 				}
 				change = true;
 			}
@@ -223,30 +217,6 @@ public class LinmaluTellraw
 				}
 				String sub = msg.substring(i1, i2 +1);
 				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
-				change = true;
-			}
-		}
-		return this;
-	}
-	@Deprecated
-	public LinmaluTellraw changeCmdChat()
-	{
-		return changeChat();
-	}
-	public LinmaluTellraw changeChat()
-	{
-		for(String cmd : chats)
-		{
-			while(true)
-			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
-				if(i1 == -1 || i2 == -1)
-				{
-					break;
-				}
-				String sub = msg.substring(i1, i2 +1);
-				msg = msg.replace(sub, getChat(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
 		}
@@ -436,20 +406,6 @@ public class LinmaluTellraw
 			msg = "";
 		}
 		return "\"}, {text:\"" + display + "\"" + cmd + msg + "}, {text:\"";
-	}
-	private String getChat(String msg)
-	{
-		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
-		String display = msgs[0];
-		if(msgs.length > 1)
-		{
-			msg = ", clickEvent:{action:suggest_command, value:\"" + msgs[1] + "\"}";
-		}
-		else
-		{
-			msg = "";
-		}
-		return "\"}, {text:\"" + display + "\"" + msg + "}, {text:\"";
 	}
 	private String getChatText(String msg)
 	{

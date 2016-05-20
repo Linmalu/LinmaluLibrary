@@ -9,11 +9,6 @@ public class LinmaluAutoRespawn
 {
 	public static void respawn(Player player)
 	{
-		new LinmaluAutoRespawn(player);
-	}
-
-	private LinmaluAutoRespawn(Player player)
-	{
 		Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), () -> player.spigot().respawn());
 	}
 }
