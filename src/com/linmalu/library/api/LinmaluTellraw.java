@@ -1,5 +1,6 @@
 package com.linmalu.library.api;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -69,31 +70,25 @@ public class LinmaluTellraw
 	}
 	public <T extends CommandSender> void sendMessage(List<T> list)
 	{
-		for(T sender : list)
-		{
-			sendMessage(sender);
-		}
+		list.forEach(sender -> sendMessage(sender));
 	}
 	public <T extends CommandSender> void sendMessage(Set<T> list)
 	{
-		for(T sender : list)
-		{
-			sendMessage(sender);
-		}
+		list.forEach(sender -> sendMessage(sender));
 	}
 	public void sendMessage(CommandSender ... list)
 	{
-		for(CommandSender sender : list)
+		Arrays.stream(list).forEach(sender ->
 		{
 			if(sender instanceof Player)
 			{
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " {text:\"\",extra:[{text:\"" + msg + "\"}]}");
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " {\"text\":\"\",\"extra\":[{\"text\":\"" + msg + "\"}]}");
 			}
 			else
 			{
-				sender.sendMessage("{text:\"\",extra:[{text:\"" + msg + "\"}]}");
+				sender.sendMessage("{\"text\":\"\",\"extra\":[{\"text\":\"" + msg + "\"}]}");
 			}
-		}
+		});
 	}
 	public LinmaluTellraw changeItem(Player player)
 	{
@@ -246,7 +241,7 @@ public class LinmaluTellraw
 	{
 		if(item == null || item.getType() == Material.AIR)
 		{
-			return "\"}, {text:\"" + ChatColor.AQUA + "[맨손]\"" + cmd + "}, {text:\"";
+			return "\"}, {\"text\":\"" + ChatColor.AQUA + "[맨손]\"" + cmd + "}, {\"text\":\"";
 		}
 		boolean count = true;
 		ItemMeta im = item.getItemMeta();
@@ -321,7 +316,7 @@ public class LinmaluTellraw
 		count = true;
 		if(im instanceof PotionMeta && ((PotionMeta)im).hasCustomEffects())
 		{
-			potion.append(", CustomPotionEffects:[");
+			potion.append(", \"CustomPotionEffects\":[");
 			for(PotionEffect pe : ((PotionMeta)im).getCustomEffects())
 			{
 				if(count)
@@ -341,7 +336,7 @@ public class LinmaluTellraw
 			display = msg;
 		}
 		display = display.replace("\"", "\\\"");
-		return "\"}, {text:\"" + display + "\"" + cmd + ", hoverEvent:{action:show_item, value:\"{id:" + item.getTypeId() + ", Damage:" + item.getDurability() + ", tag:{display:{" + name + lore + "}, ench:[" + ench + "]" + potion + "}}\"}}, {text:\"";
+		return "\"}, {\"text\":\"" + display + "\"" + cmd + ", \"hoverEvent\":{\"action\":\"show_item\", \"value\":\"{id:\\\"" + item.getTypeId() + "\\\", Damage:" + item.getDurability() + ", tag:{display:{" + name + lore + "}, ench:[" + ench + "]" + potion + "}}\"}}, {\"text\":\"";
 	}
 	private String getText(String msg)
 	{
@@ -349,13 +344,13 @@ public class LinmaluTellraw
 		String display = msgs[0];
 		if(msgs.length > 1)
 		{
-			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|", "") + "\"}}";
+			msg = ", \"hoverEvent\":{\"action\":\"show_text\", \"value\":{\"text\":\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|", "") + "\"}}";
 		}
 		else
 		{
 			msg = "";
 		}
-		return "\"}, {text:\"" + display + "\"" + msg + "}, {text:\"";
+		return "\"}, {\"text\":\"" + display + "\"" + msg + "}, {\"text\":\"";
 	}
 	private String getCmd(String msg)
 	{
@@ -363,20 +358,20 @@ public class LinmaluTellraw
 		String display = msgs[0];
 		if(msgs.length > 1)
 		{
-			msg = ", clickEvent:{action:run_command, value:\"" + msgs[1] + "\"}";
+			msg = ", \"clickEvent\":{\"action\":\"run_command\", \"value\":\"" + msgs[1] + "\"}";
 		}
 		else
 		{
 			msg = "";
 		}
-		return "\"}, {text:\"" + display + "\"" + msg + "}, {text:\"";
+		return "\"}, {\"text\":\"" + display + "\"" + msg + "}, {\"text\":\"";
 	}
 	private String getCmdItem(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
 		if(msgs.length > 1)
 		{
-			msg = ", clickEvent:{action:run_command, value:\"" + msgs[1] + "\"}";
+			msg = ", \"clickEvent\":{\"action\":\"run_command\", \"value\":\"" + msgs[1] + "\"}";
 		}
 		else
 		{
@@ -391,7 +386,7 @@ public class LinmaluTellraw
 		String cmd;
 		if(msgs.length > 1)
 		{
-			cmd = ", clickEvent:{action:run_command, value:\"" + msgs[1] + "\"}";
+			cmd = ", \"clickEvent\":{\"action\":\"run_command\", \"value\":\"" + msgs[1] + "\"}";
 		}
 		else
 		{
@@ -399,13 +394,13 @@ public class LinmaluTellraw
 		}
 		if(msgs.length > 2)
 		{
-			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|" + msgs[1] + "|", "") + "\"}}";
+			msg = ", \"hoverEvent\":{\"action\":\"show_text\", \"value\":{\"text\":\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|" + msgs[1] + "|", "") + "\"}}";
 		}
 		else
 		{
 			msg = "";
 		}
-		return "\"}, {text:\"" + display + "\"" + cmd + msg + "}, {text:\"";
+		return "\"}, {\"text\":\"" + display + "\"" + cmd + msg + "}, {\"text\":\"";
 	}
 	private String getChatText(String msg)
 	{
@@ -414,7 +409,7 @@ public class LinmaluTellraw
 		String cmd;
 		if(msgs.length > 1)
 		{
-			cmd = ", clickEvent:{action:suggest_command, value:\"" + msgs[1] + "\"}";
+			cmd = ", \"clickEvent\":{\"action\":\"suggest_command\", \"value\":\"" + msgs[1] + "\"}";
 		}
 		else
 		{
@@ -422,12 +417,12 @@ public class LinmaluTellraw
 		}
 		if(msgs.length > 2)
 		{
-			msg = ", hoverEvent:{action:show_text, value:{text:\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|" + msgs[1] + "|", "") + "\"}}";
+			msg = ", \"hoverEvent\":{\"action\":\"show_text\", \"value\":{\"text\":\"" + msg.replace("\"", "\\\"").replace(msgs[0] + "|" + msgs[1] + "|", "") + "\"}}";
 		}
 		else
 		{
 			msg = "";
 		}
-		return "\"}, {text:\"" + display + "\"" + cmd + msg + "}, {text:\"";
+		return "\"}, {\"text\":\"" + display + "\"" + cmd + msg + "}, {\"text\":\"";
 	}
 }
