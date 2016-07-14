@@ -51,6 +51,26 @@ public class LinmaluPlayer implements Runnable
 		UUID uuid = skin == null ? null : Bukkit.getOfflinePlayer(skin).getUniqueId();
 		new LinmaluPlayer(uuid, new LinmaluPacket(player, name, uuid));
 	}
+	public static boolean addPotionEffect(Player player, PotionEffect potion)
+	{
+		if(player.hasPotionEffect(potion.getType()))
+		{
+			for(PotionEffect pe : player.getActivePotionEffects())
+			{
+				if(pe.getType() == potion.getType() && (pe.getAmplifier() < potion.getAmplifier() || pe.getDuration() < potion.getDuration()))
+				{
+					player.addPotionEffect(potion, true);
+					return true;
+				}
+			}
+			return false;
+		}
+		else
+		{
+			player.addPotionEffect(potion, true);
+			return true;
+		}
+	}
 
 	private final UUID uuid;
 	private final Runnable runnable;

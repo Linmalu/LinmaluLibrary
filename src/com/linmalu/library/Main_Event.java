@@ -20,10 +20,6 @@ public class Main_Event implements Listener
 			LinmaluVersion.check(LinmaluLibrary.getMain(), player);
 			new LinmaluMD5(LinmaluLibrary.getMain());
 		}
-		if(LinmaluBlacklist.contains(player))
-		{
-			event.setJoinMessage(null);
-			LinmaluBlacklist.kick(player);
-		}
+		LinmaluBlacklist.check(player);
 	}
 }
