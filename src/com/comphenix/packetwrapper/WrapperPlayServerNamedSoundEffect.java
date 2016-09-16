@@ -140,8 +140,8 @@ public class WrapperPlayServerNamedSoundEffect extends AbstractPacket {
 	 * 
 	 * @return The current Pitch
 	 */
-	public int getPitch() {
-		return handle.getIntegers().read(3);
+	public float getPitch() {
+		return handle.getFloat().read(1);
 	}
 
 	/**
@@ -149,8 +149,8 @@ public class WrapperPlayServerNamedSoundEffect extends AbstractPacket {
 	 * 
 	 * @param value - new value.
 	 */
-	public void setPitch(byte value) {
-		handle.getIntegers().write(3, (int) value);
+	public void setPitch(float value) {
+		handle.getFloat().write(1, value);
 	}
 
 }

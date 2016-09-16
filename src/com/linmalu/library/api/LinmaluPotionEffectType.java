@@ -8,7 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class LinmaluPotionEffectType
 {
-	private static final ArrayList<LinmaluPotionEffectType> list = new ArrayList<>();
+	protected static final ArrayList<LinmaluPotionEffectType> list = new ArrayList<>();
 
 	static
 	{
@@ -93,7 +93,7 @@ public class LinmaluPotionEffectType
 	private final PotionEffectType type;
 	private final String name;
 
-	private LinmaluPotionEffectType(PotionEffectType type, String name)
+	protected LinmaluPotionEffectType(PotionEffectType type, String name)
 	{
 		this.type = type;
 		this.name = name;

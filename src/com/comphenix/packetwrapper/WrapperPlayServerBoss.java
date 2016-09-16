@@ -84,19 +84,19 @@ public class WrapperPlayServerBoss extends AbstractPacket {
 	}
 
 	public BarColor getColor() {
-		return handle.getEnumModifier(BarColor.class, 3).read(0);
+		return handle.getEnumModifier(BarColor.class, 4).read(0);
 	}
 
 	public void setColor(BarColor value) {
-		handle.getEnumModifier(BarColor.class, 3).write(0, value);
+		handle.getEnumModifier(BarColor.class, 4).write(0, value);
 	}
 
 	public BarStyle getStyle() {
-		return handle.getEnumModifier(BarStyle.class, 4).read(0);
+		return handle.getEnumModifier(BarStyle.class, 5).read(0);
 	}
 
 	public void setStyle(BarStyle value) {
-		handle.getEnumModifier(BarStyle.class, 4).write(0, value);
+		handle.getEnumModifier(BarStyle.class, 5).write(0, value);
 	}
 
 	public boolean isDarkenSky() {
@@ -124,7 +124,7 @@ public class WrapperPlayServerBoss extends AbstractPacket {
 	}
 
 	public static enum Action {
-		ADD, REMOVE, UPDATE_PCT, UPDATE_NAME, UPDATE_STYLE, UPDATE_PROPERTIES;
+        ADD, REMOVE, UPDATE_PCT, UPDATE_NAME, UPDATE_STYLE, UPDATE_PROPERTIES;
 	}
 
 	public static enum BarStyle {
