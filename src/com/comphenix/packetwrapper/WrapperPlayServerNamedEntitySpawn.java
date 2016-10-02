@@ -90,7 +90,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket {
 	 * @return The current Player UUID
 	 */
 	public UUID getPlayerUUID() {
-		return handle.getSpecificModifier(UUID.class).read(0);
+		return handle.getUUIDs().read(0);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket {
 	 * @param value - new value.
 	 */
 	public void setPlayerUUID(UUID value) {
-		handle.getSpecificModifier(UUID.class).write(0, value);
+		handle.getUUIDs().write(0, value);
 	}
 
 	/**

@@ -102,7 +102,7 @@ public class WrapperPlayClientSettings extends AbstractPacket {
 	 * @return The current Chat colours
 	 */
 	public boolean getChatColours() {
-		return handle.getSpecificModifier(boolean.class).read(0);
+		return handle.getBooleans().read(0);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class WrapperPlayClientSettings extends AbstractPacket {
 	 * @param value - new value.
 	 */
 	public void setChatColours(boolean value) {
-		handle.getSpecificModifier(boolean.class).write(0, value);
+		handle.getBooleans().write(0, value);
 	}
 
 	/**

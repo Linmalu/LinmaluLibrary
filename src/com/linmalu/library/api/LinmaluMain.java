@@ -63,7 +63,7 @@ public abstract class LinmaluMain extends JavaPlugin
 	}
 	public String getTitle()
 	{
-		return ChatColor.AQUA + "[" + getDescription().getDescription() + "] ";
+		return ChatColor.AQUA + "[" + getDescription().getDescription() + "] " + ChatColor.RESET;
 	}
 	public void registerCommand(CommandExecutor command)
 	{

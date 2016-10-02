@@ -47,7 +47,7 @@ public class WrapperPlayServerBoss extends AbstractPacket {
 	 * @return The current UUID
 	 */
 	public UUID getUniqueId() {
-		return handle.getSpecificModifier(UUID.class).read(0);
+		return handle.getUUIDs().read(0);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class WrapperPlayServerBoss extends AbstractPacket {
 	 * @param value - new value.
 	 */
 	public void setUniqueId(UUID value) {
-		handle.getSpecificModifier(UUID.class).write(0, value);
+		handle.getUUIDs().write(0, value);
 	}
 
 	public Action getAction() {

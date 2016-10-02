@@ -21,7 +21,6 @@ package com.comphenix.packetwrapper;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.IntEnum;
-import com.comphenix.protocol.reflect.StructureModifier;
 
 public class WrapperPlayServerScoreboardObjective extends AbstractPacket {
 	public static final PacketType TYPE =
@@ -100,8 +99,8 @@ public class WrapperPlayServerScoreboardObjective extends AbstractPacket {
 	 * 
 	 * @return
 	 */
-	public String getHealthDisplay() {
-		return handle.getSpecificModifier(Enum.class).read(0).name();
+	public HealthDisplay getHealthDisplay() {
+		return handle.getEnumModifier(HealthDisplay.class, 2).read(0);
 	}
 
 	/**
@@ -110,12 +109,8 @@ public class WrapperPlayServerScoreboardObjective extends AbstractPacket {
 	 * @param value - value
 	 * @see #getHealthDisplay()
 	 */
-	@SuppressWarnings("all")
-	public void setHealthDisplay(String value) {
-		StructureModifier<Enum> mod = handle.getSpecificModifier(Enum.class);
-		Enum constant =
-				Enum.valueOf(mod.read(0).getClass(), value.toUpperCase());
-		mod.write(0, constant);
+	public void setHealthDisplay(HealthDisplay value) {
+		handle.getEnumModifier(HealthDisplay.class, 2).write(0, value);
 	}
 
 	/**
@@ -137,5 +132,9 @@ public class WrapperPlayServerScoreboardObjective extends AbstractPacket {
 	 */
 	public void setMode(int value) {
 		handle.getIntegers().write(0, value);
+	}
+
+	public static enum HealthDisplay {
+		INTEGER, HEARTS;
 	}
 }

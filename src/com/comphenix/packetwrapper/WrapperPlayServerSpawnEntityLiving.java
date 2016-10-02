@@ -89,11 +89,11 @@ public class WrapperPlayServerSpawnEntityLiving extends AbstractPacket {
 	}
 
 	public UUID getUniqueId() {
-		return handle.getSpecificModifier(UUID.class).read(0);
+		return handle.getUUIDs().read(0);
 	}
 
 	public void setUniqueId(UUID value) {
-		handle.getSpecificModifier(UUID.class).write(0, value);
+		handle.getUUIDs().write(0, value);
 	}
 
 	/**

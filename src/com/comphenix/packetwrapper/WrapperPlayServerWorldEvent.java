@@ -102,7 +102,7 @@ public class WrapperPlayServerWorldEvent extends AbstractPacket {
 	 * @return The current Disable relative volume
 	 */
 	public boolean getDisableRelativeVolume() {
-		return handle.getSpecificModifier(boolean.class).read(0);
+		return handle.getBooleans().read(0);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class WrapperPlayServerWorldEvent extends AbstractPacket {
 	 * @param value - new value.
 	 */
 	public void setDisableRelativeVolume(boolean value) {
-		handle.getSpecificModifier(boolean.class).write(0, value);
+		handle.getBooleans().write(0, value);
 	}
 
 }

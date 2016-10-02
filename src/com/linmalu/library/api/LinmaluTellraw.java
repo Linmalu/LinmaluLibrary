@@ -41,13 +41,18 @@ public class LinmaluTellraw
 	{
 		sendCmdText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다." + ChatColor.GRAY + " - " + ChatColor.GOLD + cmd);
 	}
+	public static void sendItem(CommandSender sender, ItemStack item, String msg)
+	{
+		new LinmaluTellraw(new LinmaluTellraw().getItem(item, msg, "")).sendMessage(sender);
+	}
 
-	private final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
-	private final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
-	private final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
-	private final String[] itemCmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
-	private final String[] cmdTexts = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
-	private final String[] chatTexts = new String[]{"$CHATTEXT:", "$AT:", "$채팅텍스트:"};
+	private static final String[] items = new String[]{"$ITEM", "$I", "$아이템"};
+	private static final String[] texts = new String[]{"$TEXT:", "$T:", "$텍스트:"};
+	private static final String[] cmds = new String[]{"$CMD:", "$C:", "$명령어:"};
+	private static final String[] itemCmds = new String[]{"$CMDITEM", "$CI", "$명령어아이템"};
+	private static final String[] cmdTexts = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
+	private static final String[] chatTexts = new String[]{"$CHATTEXT:", "$AT:", "$채팅텍스트:"};
+
 	private boolean change = false;
 	private String msg;
 
@@ -102,7 +107,7 @@ public class LinmaluTellraw
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 + 1);
 				boolean find = false;
 				for(int i = 1; i < 10; i++)
 				{
@@ -136,7 +141,7 @@ public class LinmaluTellraw
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 + 1);
 				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -155,7 +160,7 @@ public class LinmaluTellraw
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 + 1);
 				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -174,7 +179,7 @@ public class LinmaluTellraw
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 + 1);
 				boolean find = false;
 				String ci = getCmdItem(sub.replace("$", "").replace("&", "§"));
 				String display = sub.split("\\|")[0];
@@ -210,7 +215,7 @@ public class LinmaluTellraw
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 + 1);
 				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -229,7 +234,7 @@ public class LinmaluTellraw
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 +1);
+				String sub = msg.substring(i1, i2 + 1);
 				msg = msg.replace(sub, getChatText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
 				change = true;
 			}
@@ -257,7 +262,7 @@ public class LinmaluTellraw
 		}
 		else
 		{
-			display = ChatColor.AQUA + "[아이템]";
+			display = ChatColor.AQUA + "[" + item.getType().toString() + "]";
 		}
 		count = true;
 		if(im.hasLore())
@@ -336,7 +341,8 @@ public class LinmaluTellraw
 			display = msg;
 		}
 		display = display.replace("\"", "\\\"");
-		return "\"}, {\"text\":\"" + display + "\"" + cmd + ", \"hoverEvent\":{\"action\":\"show_item\", \"value\":\"{id:\\\"" + item.getTypeId() + "\\\", Damage:" + item.getDurability() + ", tag:{display:{" + name + lore + "}, ench:[" + ench + "]" + potion + "}}\"}}, {\"text\":\"";
+		return "\"}, {\"text\":\"" + display + "\"" + cmd + ", \"hoverEvent\":{\"action\":\"show_item\", \"value\":\"{id:\\\"" + item.getTypeId() + "\\\", Damage:" + item.getDurability() + ", tag:{display:{" + name + lore + "}, ench:["
+				+ ench + "]" + potion + "}}\"}}, {\"text\":\"";
 	}
 	private String getText(String msg)
 	{

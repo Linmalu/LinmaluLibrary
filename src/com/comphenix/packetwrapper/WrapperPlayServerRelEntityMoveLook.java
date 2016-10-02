@@ -84,52 +84,52 @@ public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket {
 	 * @return The current DX
 	 */
 	public double getDx() {
-		return handle.getBytes().read(0) / 32D;
+		return handle.getIntegers().read(1) / 4096D;
 	}
 
 	/**
 	 * Set DX.
-	 * 
+	 *
 	 * @param value - new value.
 	 */
 	public void setDx(double value) {
-		handle.getBytes().write(0, (byte) (value * 32));
+		handle.getIntegers().write(1, (int) (value * 4096));
 	}
 
 	/**
 	 * Retrieve DY.
-	 * 
+	 *
 	 * @return The current DY
 	 */
 	public double getDy() {
-		return handle.getBytes().read(0) / 32D;
+		return handle.getIntegers().read(2) / 4096D;
 	}
 
 	/**
 	 * Set DY.
-	 * 
+	 *
 	 * @param value - new value.
 	 */
 	public void setDy(double value) {
-		handle.getBytes().write(0, (byte) (value * 32));
+		handle.getIntegers().write(2, (int) (value * 4096));
 	}
 
 	/**
 	 * Retrieve DZ.
-	 * 
+	 *
 	 * @return The current DZ
 	 */
 	public double getDz() {
-		return handle.getBytes().read(0) / 32D;
+		return handle.getIntegers().read(3) / 4096D;
 	}
 
 	/**
 	 * Set DZ.
-	 * 
+	 *
 	 * @param value - new value.
 	 */
 	public void setDz(double value) {
-		handle.getBytes().write(0, (byte) (value * 32));
+		handle.getIntegers().write(3, (int) (value * 4096));
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket {
 	 * @return The current On Ground
 	 */
 	public boolean getOnGround() {
-		return handle.getSpecificModifier(boolean.class).read(0);
+		return handle.getBooleans().read(0);
 	}
 
 	/**
@@ -183,6 +183,6 @@ public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket {
 	 * @param value - new value.
 	 */
 	public void setOnGround(boolean value) {
-		handle.getSpecificModifier(boolean.class).write(0, value);
+		handle.getBooleans().write(0, value);
 	}
 }

@@ -24,10 +24,8 @@ import org.bukkit.entity.Entity;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 
 public class WrapperPlayServerSpawnEntityPainting extends AbstractPacket {
 	public static final PacketType TYPE =
@@ -122,23 +120,11 @@ public class WrapperPlayServerSpawnEntityPainting extends AbstractPacket {
 		handle.getBlockPositionModifier().write(0, value);
 	}
 
-	private static final Class<?> DIRECTION_CLASS = MinecraftReflection
-			.getMinecraftClass("EnumDirection");
-
-	public static enum Direction {
-		DOWN, UP, NORTH, SOUTH, WEST, EAST;
-	}
-
-	private StructureModifier<Direction> getDirections() {
-		return handle.getModifier().<Direction> withType(DIRECTION_CLASS,
-				EnumWrappers.getGenericConverter(Direction.class));
-	}
-
 	public Direction getDirection() {
-		return getDirections().read(0);
+		return handle.getDirections().read(0);
 	}
 
 	public void setDirection(Direction value) {
-		getDirections().write(0, value);
+		handle.getDirections().write(0, value);
 	}
 }

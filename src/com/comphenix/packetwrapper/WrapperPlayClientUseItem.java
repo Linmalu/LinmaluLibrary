@@ -21,6 +21,7 @@ package com.comphenix.packetwrapper;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.EnumWrappers.Hand;
 
 public class WrapperPlayClientUseItem extends AbstractPacket {
@@ -57,11 +58,11 @@ public class WrapperPlayClientUseItem extends AbstractPacket {
 	}
 
 	public Direction getFace() {
-		return handle.getEnumModifier(Direction.class, 1).read(0);
+		return handle.getDirections().read(0);
 	}
 
 	public void setFace(Direction value) {
-		handle.getEnumModifier(Direction.class, 1).write(0, value);
+		handle.getDirections().write(0, value);
 	}
 
 	public Hand getHand() {
@@ -133,9 +134,5 @@ public class WrapperPlayClientUseItem extends AbstractPacket {
 	 */
 	public void setCursorPositionZ(float value) {
 		handle.getFloat().write(2, value);
-	}
-
-	public static enum Direction {
-		DOWN, UP, NORTH, SOUTH, WEST, EAST;
 	}
 }

@@ -88,35 +88,35 @@ public class WrapperPlayServerMap extends AbstractPacket {
 	}
 
 	public int getColumns() {
-		return handle.getIntegers().read(1);
-	}
-
-	public void setColumns(int value) {
-		handle.getIntegers().write(1, value);
-	}
-
-	public int getRows() {
-		return handle.getIntegers().read(2);
-	}
-
-	public void setRows(int value) {
-		handle.getIntegers().write(2, value);
-	}
-
-	public int getX() {
 		return handle.getIntegers().read(3);
 	}
 
-	public void setX(int value) {
+	public void setColumns(int value) {
 		handle.getIntegers().write(3, value);
 	}
 
-	public int getZ() {
+	public int getRows() {
 		return handle.getIntegers().read(4);
 	}
 
-	public void setZ(int value) {
+	public void setRows(int value) {
 		handle.getIntegers().write(4, value);
+	}
+
+	public int getX() {
+		return handle.getIntegers().read(1);
+	}
+
+	public void setX(int value) {
+		handle.getIntegers().write(1, value);
+	}
+
+	public int getZ() {
+		return handle.getIntegers().read(2);
+	}
+
+	public void setZ(int value) {
+		handle.getIntegers().write(2, value);
 	}
 
 	public byte[] getData() {

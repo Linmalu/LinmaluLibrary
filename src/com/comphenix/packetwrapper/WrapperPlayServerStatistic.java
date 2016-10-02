@@ -36,12 +36,11 @@ public class WrapperPlayServerStatistic extends AbstractPacket {
 		super(packet, TYPE);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Map<WrappedStatistic, Integer> getStatistics() {
-		return handle.getSpecificModifier(Map.class).read(0);
+		return handle.getStatisticMaps().read(0);
 	}
 
 	public void setStatistics(Map<WrappedStatistic, Integer> value) {
-		handle.getSpecificModifier(Map.class).write(0, value);
+		handle.getStatisticMaps().write(0, value);
 	}
 }

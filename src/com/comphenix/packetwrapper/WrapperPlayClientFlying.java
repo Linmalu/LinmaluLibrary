@@ -41,7 +41,7 @@ public class WrapperPlayClientFlying extends AbstractPacket {
 	 * @return The current On Ground
 	 */
 	public boolean getOnGround() {
-		return handle.getSpecificModifier(boolean.class).read(0);
+		return handle.getBooleans().read(0);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class WrapperPlayClientFlying extends AbstractPacket {
 	 * @param value - new value.
 	 */
 	public void setOnGround(boolean value) {
-		handle.getSpecificModifier(boolean.class).write(0, value);
+		handle.getBooleans().write(0, value);
 	}
 
 }
