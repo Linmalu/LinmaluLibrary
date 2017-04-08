@@ -1,18 +1,25 @@
 package com.linmalu.library.api;
 
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.potion.PotionEffect;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import com.comphenix.packetwrapper.WrapperPlayServerAbilities;
 import com.comphenix.packetwrapper.WrapperPlayServerExperience;
@@ -20,7 +27,10 @@ import com.comphenix.packetwrapper.WrapperPlayServerHeldItemSlot;
 import com.comphenix.packetwrapper.WrapperPlayServerPlayerInfo;
 import com.comphenix.packetwrapper.WrapperPlayServerRespawn;
 import com.comphenix.packetwrapper.WrapperPlayServerUpdateHealth;
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.Difficulty;
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
@@ -31,25 +41,162 @@ import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.google.common.base.Charsets;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.linmalu.library.LinmaluLibrary;
 
 public class LinmaluPlayer implements Runnable
 {
-	private static HashMap<UUID, LinmaluProfile> profiles = new HashMap<>();
+	// TODO 등록방식 변경
+	public static void initialization()
+	{
+		config.getKeys(false).forEach(key ->
+		{
+			UUID uuid = UUID.fromString(key);
+			String name = config.getData(key + ".displayname", String.class);
+			UUID skin = UUID.fromString(config.getData(key + ".skin", String.class));
+			Bukkit.broadcastMessage(uuid + " / " + name + " / " + skin);
+			synchronized(players)
+			{
+				if(players.containsKey(uuid))
+				{
+					players.put(uuid, new LinmaluPlayer(uuid, name, skin));
+				}
+			}
+		});
 
-	public static void changeName(Player player, String name)
-	{
-		changePlayer(player, name, null);
+		LinmaluLibrary.getMain().registerEvents(new Listener()
+		{
+			@EventHandler(priority = EventPriority.HIGHEST)
+			public void Event(AsyncPlayerChatEvent event)
+			{
+				UUID uuid = event.getPlayer().getUniqueId();
+				synchronized(players)
+				{
+					if(players.containsKey(uuid))
+					{
+						event.setFormat(event.getFormat().replace("%1$s", players.get(uuid).name + ChatColor.RESET));
+					}
+				}
+			}
+		});
+
+		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(LinmaluLibrary.getMain(), PacketType.Play.Server.PLAYER_INFO)
+		{
+			@Override
+			public void onPacketSending(PacketEvent event)
+			{
+				if(event.getPacketType() == PacketType.Play.Server.PLAYER_INFO)
+				{
+					WrapperPlayServerPlayerInfo packet = new WrapperPlayServerPlayerInfo(event.getPacket());
+					if(packet.getAction() == PlayerInfoAction.ADD_PLAYER && packet.getData() != null)
+					{
+						List<PlayerInfoData> list = new ArrayList<>();
+						for(PlayerInfoData data : packet.getData())
+						{
+							UUID uuid = data.getProfile().getUUID();
+							synchronized(players)
+							{
+								if(players.containsKey(uuid))
+								{
+									synchronized(skins)
+									{
+										UUID skin = players.get(uuid).getSkin();
+										if(skins.containsKey(skin))
+										{
+											list.add(skins.get(skin).getPlayerInfoData(data));
+										}
+									}
+								}
+								else
+								{
+									list.add(data);
+								}
+							}
+						}
+						packet.setData(list);
+					}
+				}
+			}
+		});
 	}
-	public static void changeSkin(Player player, String skin)
+
+	private static final LinmaluConfig config = new LinmaluConfig(new File(LinmaluLibrary.getMain().getDataFolder(), "players.yml"));
+	private static HashMap<UUID, LinmaluPlayer> players = new HashMap<>();
+	private static HashMap<UUID, LinmaluSkin> skins = new HashMap<>();
+
+	public static void clearPlayers()
 	{
-		changePlayer(player, null, skin);
+		synchronized(players)
+		{
+			players.entrySet().forEach(data -> changePlayer(data.getKey(), data.getKey()));
+			players.clear();
+		}
+	}
+	public static void changeName(OfflinePlayer player, String name)
+	{
+		changePlayerName(player, name, null);
+	}
+	public static void changeSkin(OfflinePlayer player, String skin)
+	{
+		changePlayerName(player, null, skin);
+	}
+	public static void changeSkin(OfflinePlayer player, UUID skin)
+	{
+		changePlayerUUID(player, null, skin);
+	}
+	public static void changePlayer(UUID player, UUID target)
+	{
+		changePlayer(Bukkit.getOfflinePlayer(player), Bukkit.getOfflinePlayer(target));
+	}
+	public static void changePlayer(OfflinePlayer player, OfflinePlayer target)
+	{
+		changePlayerUUID(player, target.getName(), target.getUniqueId());
 	}
 	@SuppressWarnings("deprecation")
-	public static void changePlayer(Player player, String name, String skin)
+	public static void changePlayerName(OfflinePlayer player, String name, String skin)
 	{
-		UUID uuid = skin == null ? null : Bukkit.getOfflinePlayer(skin).getUniqueId();
-		new LinmaluPlayer(uuid, new LinmaluPacket(player, name, uuid));
+		changePlayerUUID(player, name, skin == null ? null : Bukkit.getOfflinePlayer(skin).getUniqueId());
+	}
+	public static void changePlayerUUID(OfflinePlayer player, String name, UUID skin)
+	{
+		UUID uuid = player.getUniqueId();
+		if(skin == null)
+		{
+			skin = uuid;
+		}
+		if(name == null)
+		{
+			name = player.getName();
+		}
+		else if(name.length() > 16)
+		{
+			name = name.substring(0, 16);
+		}
+		config.setData(uuid + ".name", player.getName());
+		config.setData(uuid + ".displayname", name);
+		config.setData(uuid + ".skin", skin.toString());
+		name = ChatColor.translateAlternateColorCodes('&', name);
+		synchronized(players)
+		{
+			if(players.containsKey(uuid))
+			{
+				LinmaluPlayer lp = players.get(uuid);
+				if(lp.getName().equals(name) && lp.getSkin().equals(skin))
+				{
+					config.removeData(uuid.toString());
+					players.remove(uuid).start(name, skin);
+				}
+				else
+				{
+					players.get(uuid).start(name, skin);
+				}
+			}
+			else
+			{
+				players.put(uuid, new LinmaluPlayer(uuid, name, skin));
+			}
+		}
 	}
 	public static boolean addPotionEffect(Player player, PotionEffect potion)
 	{
@@ -73,87 +220,91 @@ public class LinmaluPlayer implements Runnable
 	}
 
 	private final UUID uuid;
-	private final Runnable runnable;
+	private String name;
+	private UUID skin;
+	private boolean first = true;
 
-	private LinmaluPlayer(UUID uuid, Runnable runnable)
+	private LinmaluPlayer(UUID uuid, String name, UUID skin)
 	{
 		this.uuid = uuid;
-		this.runnable = runnable;
-		if(!profiles.containsKey(uuid))
+		start(name, skin);
+	}
+	public void start(String name, UUID skin)
+	{
+		this.name = name;
+		this.skin = skin;
+		synchronized(skins)
 		{
-			profiles.put(uuid, new LinmaluProfile());
+			if(!skins.containsKey(skin))
+			{
+				skins.put(skin, new LinmaluSkin());
+			}
+			LinmaluSkin ls = skins.get(skin);
+			if(ls.isTimeOut())
+			{
+				new Thread(this).start();
+			}
+			else
+			{
+				first = false;
+				run();
+			}
 		}
-		new Thread(this).start();
 	}
 	@Override
+	@SuppressWarnings("deprecation")
 	public void run()
 	{
-		if(uuid != null && profiles.get(uuid).isTimeOut())
+		if(first)
 		{
+			first = false;
 			try
 			{
-				URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.toString().replace("-", "") + "?unsigned=false");
+				URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + skin.toString().replace("-", "") + "?unsigned=false");
 				HttpURLConnection huc = (HttpURLConnection)url.openConnection();
 				if(huc.getResponseCode() == HttpURLConnection.HTTP_OK)
 				{
-					InputStreamReader isr = new InputStreamReader(huc.getInputStream(), Charsets.UTF_8);
-					JSONObject json = (JSONObject)new JSONParser().parse(isr);
-					JSONArray properties = (JSONArray)json.get("properties");
-					for (int i = 0; i < properties.size(); i++)
+					try(InputStreamReader isr = new InputStreamReader(huc.getInputStream(), Charsets.UTF_8))
 					{
-						JSONObject property = (JSONObject)properties.get(i);
-						String name = (String)property.get("name");
-						String value = (String)property.get("value");
-						String signature = (String)property.get("signature");
-						WrappedSignedProperty wsp = new WrappedSignedProperty(name, value, signature);
-						profiles.get(uuid).setWrappedSignedProperty(wsp);
+						new JsonParser().parse(isr).getAsJsonObject().getAsJsonArray("properties").forEach(json ->
+						{
+							synchronized(skins)
+							{
+								if(skins.containsKey(skin))
+								{
+									JsonObject data = json.getAsJsonObject();
+									skins.get(skin).setWrappedSignedProperty(new WrappedSignedProperty(data.get("name").getAsString(), data.get("value").getAsString(), data.get("signature").getAsString()));
+								}
+							}
+						});
 					}
 				}
-				else if(huc.getResponseCode() == 429)
+				else
 				{
-					if(!profiles.get(uuid).isWrappedSignedProperty())
-					{
-						Thread.sleep(10000);
-						profiles.get(uuid).time = 0;
-						run();
-						return;
-					}
-					profiles.get(uuid).time = System.currentTimeMillis() - 590000;
+					Bukkit.broadcastMessage("실패");
 				}
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
 			}
+			Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), this);
 		}
-		if(runnable != null)
+		else
 		{
-			Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), runnable);
-		}
-	}
-	private static class LinmaluPacket implements Runnable
-	{
-		private Player player;
-		private String name;
-		private UUID uuid;
-
-		private LinmaluPacket(Player player, String name, UUID uuid)
-		{
-			this.player = player;
-			this.name = name;
-			this.uuid = uuid;
-		}
-		@Override
-		@SuppressWarnings("deprecation")
-		public void run()
-		{
-			if(player != null && player.isOnline())
+			first = true;
+			Player player = Bukkit.getPlayer(uuid);
+			if(player != null)
 			{
 				WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
 				info.setAction(PlayerInfoAction.ADD_PLAYER);
-				WrappedGameProfile profile = name != null ? new WrappedGameProfile(player.getUniqueId(), name) : WrappedGameProfile.fromPlayer(player);
-				profile.getProperties().putAll(uuid != null && profiles.get(uuid).isWrappedSignedProperty() ? profiles.get(uuid).getWrappedSignedProperty() : WrappedGameProfile.fromPlayer(player).getProperties());
-				info.setData(Arrays.asList(new PlayerInfoData(profile, 0, NativeGameMode.fromBukkit(player.getGameMode()), WrappedChatComponent.fromText(profile.getName()))));
+				synchronized(skins)
+				{
+					if(skins.containsKey(skin))
+					{
+						info.setData(Arrays.asList(skins.get(skin).getPlayerInfoData(player)));
+					}
+				}
 				WrapperPlayServerRespawn respawn = new WrapperPlayServerRespawn();
 				respawn.setDifficulty(Difficulty.valueOf(player.getWorld().getDifficulty().toString()));
 				respawn.setDimension(player.getWorld().getEnvironment().getId());
@@ -161,10 +312,10 @@ public class LinmaluPlayer implements Runnable
 				respawn.setLevelType(player.getWorld().getWorldType());
 				WrapperPlayServerAbilities abilities = new WrapperPlayServerAbilities();
 				abilities.setCanFly(player.getAllowFlight());
-				//abilities.setCanInstantlyBuild(false);
+				abilities.setCanInstantlyBuild(player.getGameMode() == GameMode.CREATIVE);
 				abilities.setFlying(player.isFlying());
 				abilities.setFlyingSpeed(player.getFlySpeed() / 2);
-				//abilities.setInvulnurable(false);
+				abilities.setInvulnurable(player.isInvulnerable());
 				abilities.setWalkingSpeed(player.getWalkSpeed() / 2);
 				WrapperPlayServerUpdateHealth health = new WrapperPlayServerUpdateHealth();
 				health.setFood(player.getFoodLevel());
@@ -176,13 +327,13 @@ public class LinmaluPlayer implements Runnable
 				exp.setTotalExperience(player.getTotalExperience());
 				WrapperPlayServerHeldItemSlot slot = new WrapperPlayServerHeldItemSlot();
 				slot.setSlot(player.getInventory().getHeldItemSlot());
-				Bukkit.getOnlinePlayers().forEach(player -> info.sendPacket(player));
+				Bukkit.getOnlinePlayers().forEach(p -> info.sendPacket(p));
 				respawn.sendPacket(player);
 				abilities.sendPacket(player);
 				health.sendPacket(player);
 				exp.sendPacket(player);
 				slot.sendPacket(player);
-				player.getWorld().refreshChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
+				// player.getWorld().refreshChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
 				player.teleport(player);
 				player.updateInventory();
 				for(PotionEffect pe : player.getActivePotionEffects())
@@ -193,14 +344,27 @@ public class LinmaluPlayer implements Runnable
 			}
 		}
 	}
-	private class LinmaluProfile
+	public UUID getUUID()
 	{
+		return uuid;
+	}
+	public String getName()
+	{
+		return name;
+	}
+	public UUID getSkin()
+	{
+		return skin;
+	}
+
+	private class LinmaluSkin
+	{
+		private final Multimap<String, WrappedSignedProperty> textures = HashMultimap.create();
 		private long time = 0;
-		private WrappedSignedProperty wsp;
 
 		public boolean isTimeOut()
 		{
-			if((System.currentTimeMillis() - time) > 600000)
+			if((System.currentTimeMillis() - time) > 60000)
 			{
 				time = System.currentTimeMillis();
 				return true;
@@ -210,20 +374,26 @@ public class LinmaluPlayer implements Runnable
 				return false;
 			}
 		}
-		public boolean isWrappedSignedProperty()
+		public PlayerInfoData getPlayerInfoData(Player player)
 		{
-			return wsp != null;
+			UUID uuid = player.getUniqueId();
+			String name = players.containsKey(uuid) ? players.get(uuid).getName() : player.getName();
+			WrappedGameProfile profile = new WrappedGameProfile(uuid, name);
+			profile.getProperties().putAll(textures);
+			return new PlayerInfoData(profile, 0, NativeGameMode.fromBukkit(player.getGameMode()), WrappedChatComponent.fromText(profile.getName()));
 		}
-		public Multimap<String, WrappedSignedProperty> getWrappedSignedProperty()
+		public PlayerInfoData getPlayerInfoData(PlayerInfoData data)
 		{
-			Multimap<String, WrappedSignedProperty> map = HashMultimap.create();
-			map.put("textures", wsp == null ? WrappedSignedProperty.fromValues("", "", "") : wsp);
-			return map;
+			UUID uuid = data.getProfile().getUUID();
+			String name = players.containsKey(uuid) ? players.get(uuid).getName() : data.getProfile().getName();
+			WrappedGameProfile profile = new WrappedGameProfile(uuid, name);
+			profile.getProperties().putAll(textures);
+			return new PlayerInfoData(profile, data.getLatency(), data.getGameMode(), WrappedChatComponent.fromText(profile.getName()));
 		}
 		public void setWrappedSignedProperty(WrappedSignedProperty wsp)
 		{
-			this.wsp = wsp;
-			time = System.currentTimeMillis();
+			textures.clear();
+			textures.put("textures", wsp == null ? WrappedSignedProperty.fromValues("", "", "") : wsp);
 		}
 	}
 }

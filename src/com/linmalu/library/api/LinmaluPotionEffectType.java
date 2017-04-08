@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.potion.PotionEffectType;
 
+@Deprecated
 public class LinmaluPotionEffectType
 {
 	protected static final ArrayList<LinmaluPotionEffectType> list = new ArrayList<>();

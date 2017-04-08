@@ -262,7 +262,12 @@ public class LinmaluTellraw
 		}
 		else
 		{
-			display = ChatColor.AQUA + "[" + item.getType().toString() + "]";
+			String itemName = LinmaluLanguage.getTranslateItemStack(item);
+			if(itemName == null)
+			{
+				itemName = item.getType().toString();
+			}
+			display = ChatColor.AQUA + "[" + itemName + "]";
 		}
 		count = true;
 		if(im.hasLore())
@@ -321,7 +326,7 @@ public class LinmaluTellraw
 		count = true;
 		if(im instanceof PotionMeta && ((PotionMeta)im).hasCustomEffects())
 		{
-			potion.append(", \"CustomPotionEffects\":[");
+			potion.append(", CustomPotionEffects:[");
 			for(PotionEffect pe : ((PotionMeta)im).getCustomEffects())
 			{
 				if(count)
@@ -330,9 +335,9 @@ public class LinmaluTellraw
 				}
 				else
 				{
-					ench.append(", ");
+					potion.append(", ");
 				}
-				potion.append("{id:").append(pe.getType().getId()).append(", amplifier:").append(pe.getAmplifier()).append(", duration:").append(pe.getDuration()).append("}");
+				potion.append("{Id:").append(pe.getType().getId()).append(", Amplifier:").append(pe.getAmplifier()).append(", Duration:").append(pe.getDuration()).append("}");
 			}
 			potion.append("]");
 		}

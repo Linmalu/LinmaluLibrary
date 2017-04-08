@@ -29,7 +29,7 @@ public class LinmaluBlacklist
 		try
 		{
 			URLConnection url = new URL("http://api.mc-blacklist.kr/API/check/" + check).openConnection();
-			url.setRequestProperty("User-Agent", "MC-Blacklist-System");
+			url.setRequestProperty("User-Agent", LinmaluLibrary.getMain().getDescription().getName() + " v" + LinmaluLibrary.getMain().getDescription().getVersion());
 			StringBuilder sb = new StringBuilder();
 			try(InputStream in = url.getInputStream())
 			{
@@ -46,17 +46,6 @@ public class LinmaluBlacklist
 				Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), () ->
 				{
 					player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason").getAsString() + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire");
-					try
-					{
-						URLConnection url1 = new URL("http://api.mc-blacklist.kr/API/blocklog/" + player.getName() + "/" + player.getUniqueId() + "/" + player.getAddress().getHostName()).openConnection();
-						url1.setRequestProperty("User-Agent", "MC-Blacklist-System");
-						try(InputStream in1 = url1.getInputStream())
-						{
-						}
-					}
-					catch(Exception e)
-					{
-					}
 				});
 				return true;
 			}
