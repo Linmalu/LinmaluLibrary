@@ -53,8 +53,8 @@ public class LinmaluPlayer implements Runnable
 		config.getKeys(false).forEach(key ->
 		{
 			UUID uuid = UUID.fromString(key);
-			String name = config.getData(key + ".displayname", String.class);
-			UUID skin = UUID.fromString(config.getData(key + ".skin", String.class));
+			String name = config.getString(key + ".displayname");
+			UUID skin = UUID.fromString(config.getString(key + ".skin"));
 			Bukkit.broadcastMessage(uuid + " / " + name + " / " + skin);
 			synchronized(players)
 			{
@@ -173,9 +173,9 @@ public class LinmaluPlayer implements Runnable
 		{
 			name = name.substring(0, 16);
 		}
-		config.setData(uuid + ".name", player.getName());
-		config.setData(uuid + ".displayname", name);
-		config.setData(uuid + ".skin", skin.toString());
+		config.set(uuid + ".name", player.getName());
+		config.set(uuid + ".displayname", name);
+		config.set(uuid + ".skin", skin.toString());
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		synchronized(players)
 		{
@@ -184,7 +184,7 @@ public class LinmaluPlayer implements Runnable
 				LinmaluPlayer lp = players.get(uuid);
 				if(lp.getName().equals(name) && lp.getSkin().equals(skin))
 				{
-					config.removeData(uuid.toString());
+					config.remove(uuid.toString());
 					players.remove(uuid).start(name, skin);
 				}
 				else
@@ -281,7 +281,7 @@ public class LinmaluPlayer implements Runnable
 				}
 				else
 				{
-					Bukkit.broadcastMessage("실패");
+//					Bukkit.broadcastMessage("실패");
 				}
 			}
 			catch(Exception e)

@@ -57,7 +57,7 @@ public class LinmaluLanguage
 		{
 			return EnumEntity.getSpawnEggName(item);
 		}
-		else if(item.getType() == Material.SKULL_ITEM && item.getDurability() == 3) // is player's skull
+		else if(item.getType() == Material.SKULL_ITEM && item.getDurability() == 3)
 		{
 			return EnumItem.getPlayerSkullName(item);
 		}

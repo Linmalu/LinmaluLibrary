@@ -91,7 +91,7 @@ public class LinmaluTellraw
 			}
 			else
 			{
-				sender.sendMessage("{\"text\":\"\",\"extra\":[{\"text\":\"" + msg + "\"}]}");
+				sender.sendMessage(msg);
 			}
 		});
 	}

@@ -1,55 +1,111 @@
 package com.linmalu.library.api;
 
 import java.io.File;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class LinmaluConfig
+public class LinmaluConfig extends YamlConfiguration
 {
 	private final File file;
-	private final YamlConfiguration config;
 
 	public LinmaluConfig(File file)
 	{
 		this.file = file;
-		config = YamlConfiguration.loadConfiguration(file);
+		reload();
 	}
-	public void setData(String key, Object value)
+	@Override
+	public void set(String path, Object value)
 	{
-		config.set(key, value);
+		super.set(path, value);
 		save();
 	}
-	public boolean isData(String key)
+	public <T> List<T> getListData(String path)
 	{
-		return config.isSet(key);
+		return getListData(path, new ArrayList<T>());
 	}
-	public Set<String> getKeys(boolean deep)
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getListData(String path, List<T> list)
 	{
-		return config.getKeys(deep);
+		try
+		{
+			list = (List<T>)getList(path, list);
+		}
+		catch(Exception e)
+		{
+		}
+		return list;
 	}
-	public <T> T getData(String key, Class<T> clazz)
+	public void remove(String key)
 	{
-		return clazz.cast(config.get(key));
+		set(key, null);
 	}
-	public void removeData(String key)
+	public void clear()
 	{
-		config.set(key, null);
-		save();
+		getKeys(true).forEach(key -> remove(key));
 	}
-	public void clearData()
+	public void reload()
 	{
-		config.getKeys(true).forEach(key -> removeData(key));
+		try
+		{
+			load(file);
+		}
+		catch(Exception e)
+		{
+		}
 	}
 	private void save()
 	{
 		try
 		{
-			config.save(file);
+			save(file);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+	@Deprecated
+	public void setData(String key, Object value)
+	{
+		set(key, value);
+	}
+	@Deprecated
+	public boolean isData(String key)
+	{
+		return isSet(key);
+	}
+	@Deprecated
+	public <T> T getData(String key, Class<T> clazz)
+	{
+		return clazz.cast(get(key));
+	}
+	@Deprecated
+	public <T> T getData(String key, Class<T> clazz, T data)
+	{
+		try
+		{
+			return clazz.cast(get(key));
+		}
+		catch(Exception e)
+		{
+			return data;
+		}
+	}
+	@Deprecated
+	public void removeData(String key)
+	{
+		set(key, null);
+	}
+	@Deprecated
+	public void clearData()
+	{
+		getKeys(true).forEach(key -> removeData(key));
+	}
+	@Deprecated
+	public YamlConfiguration getConfig()
+	{
+		return this;
 	}
 }

@@ -46,14 +46,6 @@ public class LinmaluKeyboardData implements Serializable
 			oos.flush();
 			return bos.toByteArray();
 		}
-		// ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		// ObjectOutputStream oos = new ObjectOutputStream(bos);
-		// oos.writeObject(this);
-		// oos.flush();
-		// byte[] bytes = bos.toByteArray();
-		// oos.close();
-		// bos.close();
-		// return bytes;
 	}
 	public static LinmaluKeyboardData toLinmaluKeyboardData(byte[] bytes) throws IOException, ClassNotFoundException
 	{
@@ -61,11 +53,5 @@ public class LinmaluKeyboardData implements Serializable
 		{
 			return (LinmaluKeyboardData)ois.readObject();
 		}
-		// ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		// ObjectInputStream ois = new ObjectInputStream(bis);
-		// LinmaluKeyboardData lkd = (LinmaluKeyboardData)ois.readObject();
-		// ois.close();
-		// bis.close();
-		// return lkd;
 	}
 }

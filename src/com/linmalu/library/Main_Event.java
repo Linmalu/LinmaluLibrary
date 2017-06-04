@@ -22,10 +22,4 @@ public class Main_Event implements Listener
 		}
 		LinmaluBlacklist.check(player);
 	}
-	// @EventHandler
-	// public void Event(LinmaluShortcutkeyUseEvent event)
-	// {
-	// LinmaluKeyboardData key = event.getLinmaluKeyboardData();
-	// Bukkit.broadcastMessage(LinmaluKeyboard.getLinmaluKeyboard(key.getLinmaluKeyboard().getKeyCode()).toString() + " / " + key.isShift() + " / " + key.isCtrl() + " / " + key.isAlt());
-	// }
 }
