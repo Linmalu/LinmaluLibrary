@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.linmalu.shortcutkey.LinmaluKeyboardData;
+import com.linmalu.keyboard.LinmaluKeyboardData;
 
 public class LinmaluShortcutkeyUseEvent extends Event
 {

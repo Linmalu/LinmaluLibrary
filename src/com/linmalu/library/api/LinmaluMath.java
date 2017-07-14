@@ -64,4 +64,56 @@ public class LinmaluMath
 		double z = loc.getZ() - center.getZ();
 		return (Math.toDegrees(Math.atan2(z, x)) + 270) % 360;
 	}
+	public static int betweenValue(int value, int min, int max)
+	{
+		int size = max - min;
+		int result = value % size;
+		return (result < 0 ? result + size : result) + min;
+	}
+	public static long betweenValue(long value, long min, long max)
+	{
+		long size = max - min;
+		long result = value % size;
+		return (result < 0 ? result + size : result) + min;
+	}
+	public static float betweenValue(float value, float min, float max)
+	{
+		float size = max - min;
+		float result = value % size;
+		return (result < 0 ? result + size : result) + min;
+	}
+	public static double betweenValue(double value, double min, double max)
+	{
+		double size = max - min;
+		double result = value % size;
+		return (result < 0 ? result + size : result) + min;
+	}
+	public static int distanceValue(int value1, int value2, int min, int max, boolean ascendingOrder)
+	{
+		value1 = betweenValue(value1, min, max);
+		value2 = betweenValue(value2, min, max);
+		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+	}
+	public static long distanceValue(long value1, long value2, long min, long max, boolean ascendingOrder)
+	{
+		value1 = betweenValue(value1, min, max);
+		value2 = betweenValue(value2, min, max);
+		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+	}
+	public static float distanceValue(float value1, float value2, float min, float max, boolean ascendingOrder)
+	{
+		value1 = betweenValue(value1, min, max);
+		value2 = betweenValue(value2, min, max);
+		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+	}
+	public static double distanceValue(double value1, double value2, double min, double max, boolean ascendingOrder)
+	{
+		value1 = betweenValue(value1, min, max);
+		value2 = betweenValue(value2, min, max);
+		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+	}
+	public static double distance(Location loc1, Location loc2)
+	{
+		return loc1.getWorld() != loc2.getWorld() ? Double.MAX_VALUE : loc1.distance(loc2);
+	}
 }

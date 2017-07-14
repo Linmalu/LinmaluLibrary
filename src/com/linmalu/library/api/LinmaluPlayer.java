@@ -1,6 +1,5 @@
 package com.linmalu.library.api;
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -47,24 +46,11 @@ import com.linmalu.library.LinmaluLibrary;
 
 public class LinmaluPlayer implements Runnable
 {
-	// TODO 등록방식 변경
+	private static HashMap<UUID, LinmaluPlayer> players = new HashMap<>();
+	private static HashMap<UUID, LinmaluSkin> skins = new HashMap<>();
+
 	public static void initialization()
 	{
-		config.getKeys(false).forEach(key ->
-		{
-			UUID uuid = UUID.fromString(key);
-			String name = config.getString(key + ".displayname");
-			UUID skin = UUID.fromString(config.getString(key + ".skin"));
-			Bukkit.broadcastMessage(uuid + " / " + name + " / " + skin);
-			synchronized(players)
-			{
-				if(players.containsKey(uuid))
-				{
-					players.put(uuid, new LinmaluPlayer(uuid, name, skin));
-				}
-			}
-		});
-
 		LinmaluLibrary.getMain().registerEvents(new Listener()
 		{
 			@EventHandler(priority = EventPriority.HIGHEST)
@@ -80,7 +66,6 @@ public class LinmaluPlayer implements Runnable
 				}
 			}
 		});
-
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(LinmaluLibrary.getMain(), PacketType.Play.Server.PLAYER_INFO)
 		{
 			@Override
@@ -120,11 +105,6 @@ public class LinmaluPlayer implements Runnable
 			}
 		});
 	}
-
-	private static final LinmaluConfig config = new LinmaluConfig(new File(LinmaluLibrary.getMain().getDataFolder(), "players.yml"));
-	private static HashMap<UUID, LinmaluPlayer> players = new HashMap<>();
-	private static HashMap<UUID, LinmaluSkin> skins = new HashMap<>();
-
 	public static void clearPlayers()
 	{
 		synchronized(players)
@@ -173,9 +153,6 @@ public class LinmaluPlayer implements Runnable
 		{
 			name = name.substring(0, 16);
 		}
-		config.set(uuid + ".name", player.getName());
-		config.set(uuid + ".displayname", name);
-		config.set(uuid + ".skin", skin.toString());
 		name = ChatColor.translateAlternateColorCodes('&', name);
 		synchronized(players)
 		{
@@ -184,7 +161,6 @@ public class LinmaluPlayer implements Runnable
 				LinmaluPlayer lp = players.get(uuid);
 				if(lp.getName().equals(name) && lp.getSkin().equals(skin))
 				{
-					config.remove(uuid.toString());
 					players.remove(uuid).start(name, skin);
 				}
 				else
@@ -204,7 +180,7 @@ public class LinmaluPlayer implements Runnable
 		{
 			for(PotionEffect pe : player.getActivePotionEffects())
 			{
-				if(pe.getType() == potion.getType() && (pe.getAmplifier() < potion.getAmplifier() || pe.getDuration() < potion.getDuration()))
+				if(pe.getType() == potion.getType() && (pe.getAmplifier() < potion.getAmplifier() || (pe.getAmplifier() == potion.getAmplifier() && pe.getDuration() < potion.getDuration())))
 				{
 					player.addPotionEffect(potion, true);
 					return true;
@@ -279,10 +255,6 @@ public class LinmaluPlayer implements Runnable
 						});
 					}
 				}
-				else
-				{
-//					Bukkit.broadcastMessage("실패");
-				}
 			}
 			catch(Exception e)
 			{
@@ -333,7 +305,6 @@ public class LinmaluPlayer implements Runnable
 				health.sendPacket(player);
 				exp.sendPacket(player);
 				slot.sendPacket(player);
-				// player.getWorld().refreshChunk(player.getLocation().getChunk().getX(), player.getLocation().getChunk().getZ());
 				player.teleport(player);
 				player.updateInventory();
 				for(PotionEffect pe : player.getActivePotionEffects())

@@ -1,4 +1,4 @@
-package com.linmalu.shortcutkey;
+package com.linmalu.keyboard;
 
 public enum LinmaluKeyboard
 {
@@ -144,11 +144,28 @@ public enum LinmaluKeyboard
 	{
 		return keyCode;
 	}
+	@Override
+	public String toString()
+	{
+		return super.toString().replace("KEY_", "");
+	}
+
 	public static LinmaluKeyboard getLinmaluKeyboard(int keyCode)
 	{
 		for(LinmaluKeyboard lk : values())
 		{
 			if(lk.keyCode == keyCode)
+			{
+				return lk;
+			}
+		}
+		return KEY_NONE;
+	}
+	public static LinmaluKeyboard getLinmaluKeyboard(String key)
+	{
+		for(LinmaluKeyboard lk : values())
+		{
+			if(lk.toString().equals(key.replace("KEY_", "")))
 			{
 				return lk;
 			}

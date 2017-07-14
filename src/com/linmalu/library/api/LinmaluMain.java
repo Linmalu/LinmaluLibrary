@@ -55,6 +55,7 @@ public abstract class LinmaluMain extends JavaPlugin
 	{
 		getLogger().info("제작 : 린마루(Linmalu)");
 		LinmaluVersion.check(this, Bukkit.getConsoleSender());
+		new LinmaluMD5(this);
 	}
 	@Override
 	public void onDisable()

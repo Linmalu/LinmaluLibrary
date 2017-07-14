@@ -9,10 +9,12 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class LinmaluTitle
 {
+	@Deprecated
 	public static void sendMessage(String title, String subTitle, int fadeIn, int stay, int fadeOut)
 	{
 		Bukkit.getOnlinePlayers().forEach(player -> sendMessage(player, title, subTitle, fadeIn, stay, fadeOut));
 	}
+	@Deprecated
 	public static void sendMessage(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut)
 	{
 		WrapperPlayServerTitle packet = new WrapperPlayServerTitle();
