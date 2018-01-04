@@ -51,21 +51,6 @@ public class LinmaluPlayer implements Runnable
 
 	public static void initialization()
 	{
-		LinmaluLibrary.getMain().registerEvents(new Listener()
-		{
-			@EventHandler(priority = EventPriority.HIGHEST)
-			public void Event(AsyncPlayerChatEvent event)
-			{
-				UUID uuid = event.getPlayer().getUniqueId();
-				synchronized(players)
-				{
-					if(players.containsKey(uuid))
-					{
-						event.setFormat(event.getFormat().replace("%1$s", players.get(uuid).name + ChatColor.RESET));
-					}
-				}
-			}
-		});
 		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(LinmaluLibrary.getMain(), PacketType.Play.Server.PLAYER_INFO)
 		{
 			@Override
@@ -104,12 +89,27 @@ public class LinmaluPlayer implements Runnable
 				}
 			}
 		});
+		LinmaluLibrary.getMain().registerEvents(new Listener()
+		{
+			@EventHandler(priority = EventPriority.HIGHEST)
+			public void Event(AsyncPlayerChatEvent event)
+			{
+				UUID uuid = event.getPlayer().getUniqueId();
+				synchronized(players)
+				{
+					if(players.containsKey(uuid))
+					{
+						event.setFormat(event.getFormat().replace("%1$s", players.get(uuid).name + ChatColor.RESET));
+					}
+				}
+			}
+		});
 	}
 	public static void clearPlayers()
 	{
 		synchronized(players)
 		{
-			players.entrySet().forEach(data -> changePlayer(data.getKey(), data.getKey()));
+			players.entrySet().iterator().forEachRemaining(data -> changePlayer(data.getKey(), data.getKey()));
 			players.clear();
 		}
 	}
@@ -180,7 +180,7 @@ public class LinmaluPlayer implements Runnable
 		{
 			for(PotionEffect pe : player.getActivePotionEffects())
 			{
-				if(pe.getType() == potion.getType() && (pe.getAmplifier() < potion.getAmplifier() || (pe.getAmplifier() == potion.getAmplifier() && pe.getDuration() < potion.getDuration())))
+				if(pe.getType().getName().equals(potion.getType().getName()) && (pe.getAmplifier() < potion.getAmplifier() || (pe.getAmplifier() == potion.getAmplifier() && pe.getDuration() < potion.getDuration())))
 				{
 					player.addPotionEffect(potion, true);
 					return true;

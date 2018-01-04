@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -20,7 +19,7 @@ import com.meowj.langutils.lang.convert.EnumPotionEffect;
 
 public class LinmaluLanguage
 {
-	private static Map<String, String> map = new HashMap<>();
+	private static Map<String, String> map;
 
 	static
 	{
@@ -46,7 +45,6 @@ public class LinmaluLanguage
 	{
 		return map.get(name);
 	}
-
 	public static String getTranslateItemStack(ItemStack item)
 	{
 		if(item.getType() == Material.POTION || item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION || item.getType() == Material.TIPPED_ARROW)
@@ -63,17 +61,14 @@ public class LinmaluLanguage
 		}
 		return EnumItem.get(item);
 	}
-
 	public static String getTranslateEnchantment(Enchantment enchantment)
 	{
 		return EnumEnchantment.get(enchantment);
 	}
-
 	public static String getTranslateEnchantmentLevel(int level)
 	{
 		return EnumEnchantmentLevel.get(level);
 	}
-
 	public static String getTranslatePotion(PotionType effectType)
 	{
 		return EnumPotionEffect.get(effectType);

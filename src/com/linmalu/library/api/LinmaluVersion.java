@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+@Deprecated // 1.12.2
 public class LinmaluVersion
 {
 	public static void check(LinmaluMain plugin, CommandSender sender)

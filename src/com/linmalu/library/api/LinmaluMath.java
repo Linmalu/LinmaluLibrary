@@ -1,7 +1,10 @@
 package com.linmalu.library.api;
 
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class LinmaluMath
 {
@@ -115,5 +118,22 @@ public class LinmaluMath
 	public static double distance(Location loc1, Location loc2)
 	{
 		return loc1.getWorld() != loc2.getWorld() ? Double.MAX_VALUE : loc1.distance(loc2);
+	}
+	public static Vector getRandomVector(int x1, int z1, int x2, int z2)
+	{
+		Random ran = new Random();
+		if(x1 > x2)
+		{
+			int x = x1;
+			x1 = x2;
+			x2 = x;
+		}
+		if(z1 > z2)
+		{
+			int z = z1;
+			z1 = z2;
+			z2 = z;
+		}
+		return new Vector(ran.nextInt(x2 - x1 + 1) + x1 + 0.5D, 0, ran.nextInt(z2 - z1 + 1) + z1 + 0.5D);
 	}
 }

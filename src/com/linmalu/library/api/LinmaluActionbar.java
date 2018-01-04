@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.packetwrapper.WrapperPlayServerChat;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 
 public class LinmaluActionbar
 {
@@ -15,7 +16,7 @@ public class LinmaluActionbar
 	public static void sendMessage(Player player, String message)
 	{
 		WrapperPlayServerChat packet = new WrapperPlayServerChat();
-		packet.setPosition((byte)2);
+		packet.setChatType(ChatType.GAME_INFO);
 		packet.setMessage(WrappedChatComponent.fromText(message));
 		packet.sendPacket(player);
 	}

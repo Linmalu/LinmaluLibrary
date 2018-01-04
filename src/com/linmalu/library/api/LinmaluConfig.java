@@ -4,22 +4,87 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class LinmaluConfig extends YamlConfiguration
 {
+	public static boolean checkLocation(Location loc)
+	{
+		try
+		{
+			toLocation(loc);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+	}
+	public static boolean checkLocation(String msg)
+	{
+		try
+		{
+			toLocation(msg);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+	}
+	public static String toLocation(Location loc)
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(loc.getWorld().getName());
+		sb.append(", ");
+		sb.append(loc.getX());
+		sb.append(", ");
+		sb.append(loc.getY());
+		sb.append(", ");
+		sb.append(loc.getZ());
+		sb.append(", ");
+		sb.append(loc.getYaw());
+		sb.append(", ");
+		sb.append(loc.getPitch());
+		return sb.toString();
+	}
+	public static Location toLocation(String msg)
+	{
+		String[] args = msg.replace(" ", "").split(",");
+		return new Location(Bukkit.getWorld(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Float.parseFloat(args[4]), Float.parseFloat(args[5]));
+	}
+
 	private final File file;
+	private boolean autoSave;
 
 	public LinmaluConfig(File file)
 	{
+		this(file, true);
+	}
+	public LinmaluConfig(File file, boolean autoSave)
+	{
 		this.file = file;
+		this.autoSave = autoSave;
 		reload();
+	}
+	public boolean isAutoSave()
+	{
+		return autoSave;
+	}
+	public void setAutoSave(boolean autoSave)
+	{
+		this.autoSave = autoSave;
 	}
 	@Override
 	public void set(String path, Object value)
 	{
 		super.set(path, value);
-		save();
+		if(autoSave)
+		{
+			save();
+		}
 	}
 	public <T> List<T> getListData(String path)
 	{
@@ -43,7 +108,7 @@ public class LinmaluConfig extends YamlConfiguration
 	}
 	public void clear()
 	{
-		getKeys(true).forEach(key -> remove(key));
+		getKeys(false).iterator().forEachRemaining(this::remove);
 	}
 	public void reload()
 	{
@@ -55,7 +120,7 @@ public class LinmaluConfig extends YamlConfiguration
 		{
 		}
 	}
-	private void save()
+	public void save()
 	{
 		try
 		{
@@ -63,49 +128,6 @@ public class LinmaluConfig extends YamlConfiguration
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 		}
-	}
-	@Deprecated
-	public void setData(String key, Object value)
-	{
-		set(key, value);
-	}
-	@Deprecated
-	public boolean isData(String key)
-	{
-		return isSet(key);
-	}
-	@Deprecated
-	public <T> T getData(String key, Class<T> clazz)
-	{
-		return clazz.cast(get(key));
-	}
-	@Deprecated
-	public <T> T getData(String key, Class<T> clazz, T data)
-	{
-		try
-		{
-			return clazz.cast(get(key));
-		}
-		catch(Exception e)
-		{
-			return data;
-		}
-	}
-	@Deprecated
-	public void removeData(String key)
-	{
-		set(key, null);
-	}
-	@Deprecated
-	public void clearData()
-	{
-		getKeys(true).forEach(key -> removeData(key));
-	}
-	@Deprecated
-	public YamlConfiguration getConfig()
-	{
-		return this;
 	}
 }

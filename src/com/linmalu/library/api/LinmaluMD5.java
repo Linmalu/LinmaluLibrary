@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@Deprecated // 1.12.2
 public class LinmaluMD5 implements Runnable
 {
 	private final Plugin plugin;

@@ -1,6 +1,7 @@
 package com.linmalu.library.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,10 +10,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 
 import com.comphenix.packetwrapper.WrapperPlayServerEntityMetadata;
@@ -42,19 +44,61 @@ public class LinmaluGlowing
 					WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata(event.getPacket());
 					if(isGlowing(event.getPlayer().getUniqueId(), packet.getEntity(event).getUniqueId()))
 					{
-						WrappedWatchableObject data = packet.getMetadata().get(0);
-						if(data == null)
+						boolean find = false;
+						for(WrappedWatchableObject wwo : packet.getMetadata())
 						{
-							new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), (byte)0x40);
+							if(wwo.getIndex() == 0)
+							{
+								find = true;
+								if(((byte)wwo.getRawValue() & 0x40) != 0x40)
+								{
+									Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getMain(), () ->
+									{
+										WrapperPlayServerEntityMetadata p = new WrapperPlayServerEntityMetadata();
+										p.setEntityID(packet.getEntity(event).getEntityId());
+										packet.setMetadata(new ArrayList<>(Arrays.asList(new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), (byte)((byte)wwo.getRawValue() | 0x40)))));
+										p.sendPacket(event.getPlayer());
+									});
+								}
+							}
 						}
-						else
+						if(!find)
 						{
-							data.setValue((byte)((byte)data.getRawValue() | 0x40));
+							Byte b = WrappedDataWatcher.getEntityWatcher(packet.getEntity(event)).getByte(0);
+							if(b != null)
+							{
+								ArrayList<WrappedWatchableObject> list = new ArrayList<>(packet.getMetadata());
+								list.add(new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), (byte)(b | 0x40)));
+								packet.setMetadata(list);
+							}
+						}
+					}
+					else if(!(packet.getEntity(event) instanceof LivingEntity && ((LivingEntity)packet.getEntity(event)).hasPotionEffect(PotionEffectType.GLOWING)))
+					{
+						boolean find = false;
+						for(WrappedWatchableObject wwo : packet.getMetadata())
+						{
+							if(wwo.getIndex() == 0)
+							{
+								find = true;
+								wwo.setValue((byte)((byte)wwo.getRawValue() & 0xBF));
+							}
+						}
+						if(!find)
+						{
+							Byte b = WrappedDataWatcher.getEntityWatcher(packet.getEntity(event)).getByte(0);
+							if(b != null)
+							{
+								ArrayList<WrappedWatchableObject> list = new ArrayList<>(packet.getMetadata());
+								list.add(new WrappedWatchableObject(new WrappedDataWatcherObject(0, Registry.get(Byte.class)), b));
+								packet.setMetadata(list);
+							}
 						}
 					}
 				}
 			}
 		});
+		Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(entity -> setGlowing(entity.getUniqueId(), false)));
 	}
 	public static boolean isGlowing(UUID player, UUID target)
 	{
@@ -83,18 +127,7 @@ public class LinmaluGlowing
 			{
 				players.put(player, new ArrayList<>());
 			}
-			Entity entity = null;
-			for(World world : Bukkit.getWorlds())
-			{
-				for(Entity e : world.getEntities())
-				{
-					if(entity.getUniqueId().equals(target))
-					{
-						entity = e;
-						break;
-					}
-				}
-			}
+			Entity entity = Bukkit.getEntity(target);
 			if(entity != null)
 			{
 				if(glowing)
@@ -107,6 +140,10 @@ public class LinmaluGlowing
 				else
 				{
 					players.get(player).remove(target);
+					if(players.get(player).isEmpty())
+					{
+						players.remove(player);
+					}
 				}
 				if(color != null)
 				{
@@ -132,7 +169,6 @@ public class LinmaluGlowing
 				{
 					WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
 					packet.setEntityID(entity.getEntityId());
-					packet.setMetadata(WrappedDataWatcher.getEntityWatcher(entity).getWatchableObjects());
 					packet.sendPacket(p);
 				}
 			}
@@ -152,7 +188,7 @@ public class LinmaluGlowing
 			Player p = Bukkit.getPlayer(player);
 			if(p != null)
 			{
-				players.get(player).stream().filter(entity -> !isGlowing(player, entity)).forEach(entity -> setGlowing(player, entity, false));
+				new ArrayList<>(players.get(player)).stream().forEach(entity -> setGlowing(player, entity, false));
 			}
 			players.remove(player);
 		}

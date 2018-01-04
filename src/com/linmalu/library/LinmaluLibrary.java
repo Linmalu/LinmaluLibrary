@@ -16,10 +16,6 @@ public class LinmaluLibrary extends LinmaluMain
 		registerEvents(new Main_Event());
 		Bukkit.getMessenger().registerIncomingPluginChannel(this, LinmaluKeyboardChannel.channel, new LinmaluKeyboardChannel());
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, LinmaluKeyboardChannel.channel);
-		Initialization();
-	}
-	private void Initialization()
-	{
 		LinmaluPlayer.initialization();
 		LinmaluGlowing.initialization();
 	}

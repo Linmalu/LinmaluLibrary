@@ -1,100 +1,99 @@
 package com.linmalu.library.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public enum LinmaluItemStack
+import com.linmalu.library.api.event.LinmaluMaxItemStackSizeEvent;
+
+public class LinmaluItemStack
 {
-	TYPE, AMOUNT, DURABILITY, NAME, LORE;
-
-	public static boolean equalsItemStack(ItemStack item1, ItemStack item2, LinmaluItemStack ... types)
+	public static boolean equalsItemStack(ItemStack item1, ItemStack item2)
 	{
-		Map<LinmaluItemStack, Boolean> map = new HashMap<>();
-		map.put(TYPE, item1.getType() == item2.getType());
-		map.put(AMOUNT, item1.getAmount() == item2.getAmount());
-		map.put(DURABILITY, item1.getDurability() == item2.getDurability());
-		boolean checkName = false;
-		boolean checkLore = false;
-		if(item1.hasItemMeta() == item2.hasItemMeta())
+		if(item1 != null && item2 != null)
 		{
-			if(item1.hasItemMeta())
+			item1 = item1.clone();
+			item2 = item2.clone();
+			item1.setAmount(1);
+			item2.setAmount(1);
+			return item1.equals(item2);
+		}
+		return false;
+	}
+	public static boolean canAddItemStack(Player player, int size, ItemStack itemStack)
+	{
+		for(ItemStack item : player.getInventory().getStorageContents())
+		{
+			if(item == null || item.getType() == Material.AIR || (equalsItemStack(item, itemStack) && item.getAmount() < size))
 			{
-				ItemMeta im1 = item1.getItemMeta();
-				ItemMeta im2 = item2.getItemMeta();
-				if(im1.hasDisplayName() == im2.hasDisplayName())
+				return true;
+			}
+		}
+		return false;
+	}
+	public static List<ItemStack> addItemStack(Player player, ItemStack ... itemStacks)
+	{
+		List<ItemStack> list = new ArrayList<>();
+		if(player != null)
+		{
+			for(ItemStack item : itemStacks)
+			{
+				item = item.clone();
+				int size = new LinmaluMaxItemStackSizeEvent(player, item).callEvent().getMaxSize();
+				List<Integer> indexs = new ArrayList<>();
+				ItemStack[] items = player.getInventory().getStorageContents();
+				for(int i = 0; i < items.length; i++)
 				{
-					if(im1.hasDisplayName())
+					if(items[i] == null || items[i].getType() == Material.AIR)
 					{
-						checkName = im1.getDisplayName().equals(im2.getDisplayName());
+						indexs.add(i);
 					}
-					else
+					else if(equalsItemStack(item, items[i]) && items[i].getAmount() < size)
 					{
-						checkName = true;
-					}
-				}
-				if(im1.hasLore() == im2.hasLore())
-				{
-					if(im1.hasLore())
-					{
-						List<String> list1 = im1.getLore();
-						List<String> list2 = im2.getLore();
-						if(list1.size() == list2.size())
+						if(item.getAmount() + items[i].getAmount() > size)
 						{
-							checkLore = true;
-							for(int i = 0; i < list1.size(); i++)
-							{
-								if(!list1.get(i).equals(list2.get(i)))
-								{
-									checkLore = false;
-									break;
-								}
-							}
+							item.setAmount(item.getAmount() - (size - items[i].getAmount()));
+							items[i].setAmount(64);
+						}
+						else
+						{
+							items[i].setAmount(item.getAmount() + items[i].getAmount());
+							item.setAmount(0);
 						}
 					}
-					else
+				}
+				for(int index : indexs)
+				{
+					if(item.getAmount() > 0)
 					{
-						checkLore = true;
+						if(item.getAmount() > size)
+						{
+							items[index] = item.clone();
+							items[index].setAmount(size);
+							item.setAmount(item.getAmount() - size);
+						}
+						else
+						{
+							items[index] = item.clone();
+							item.setAmount(0);
+						}
 					}
 				}
-			}
-			else
-			{
-				checkName = true;
-				checkLore = true;
-			}
-		}
-		map.put(NAME, checkName);
-		map.put(LORE, checkLore);
-		for(LinmaluItemStack type : types)
-		{
-			if(!map.get(type))
-			{
-				return false;
+				player.getInventory().setStorageContents(items);
+				if(item.getAmount() > 0)
+				{
+					list.add(item);
+				}
 			}
 		}
-		return true;
-	}
-	public static ItemStack getItemStack(Material type, int amount, int damage, boolean hideFlag, String name, String ... lore)
-	{
-		ItemStack item = new ItemStack(type, amount, (short)damage);
-		ItemMeta im = item.getItemMeta();
-		if(hideFlag)
+		else
 		{
-			im.addItemFlags(ItemFlag.values());
+			list.addAll(Arrays.asList(itemStacks));
 		}
-		im.setDisplayName(name);
-		if(!(lore.length == 1 && lore[0].equals("")))
-		{
-			im.setLore(Arrays.asList(lore));
-		}
-		item.setItemMeta(im);
-		return item;
+		return list;
 	}
 }
