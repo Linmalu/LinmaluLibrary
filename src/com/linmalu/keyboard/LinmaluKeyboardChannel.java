@@ -10,6 +10,7 @@ public class LinmaluKeyboardChannel implements PluginMessageListener
 {
 	public static final String channel = "LinmaluKeyboard";
 
+	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message)
 	{
 		if(LinmaluKeyboardChannel.channel.equals(channel))

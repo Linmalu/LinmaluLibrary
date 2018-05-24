@@ -16,6 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
+import com.meowj.langutils.lang.LanguageHelper;
+
 public class LinmaluTellraw
 {
 	public static void sendChatText(CommandSender sender, String cmd, String msg, String text)
@@ -262,7 +264,8 @@ public class LinmaluTellraw
 		}
 		else
 		{
-			String itemName = LinmaluLanguage.getTranslateItemStack(item);
+//			String itemName = LinmaluLanguage.getTranslateItemStack(item);
+			String itemName = LanguageHelper.getItemDisplayName(item, "");
 			if(itemName == null)
 			{
 				itemName = item.getType().toString();

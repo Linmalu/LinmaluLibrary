@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -193,6 +194,10 @@ public class LinmaluPlayer implements Runnable
 			player.addPotionEffect(potion, true);
 			return true;
 		}
+	}
+	public static Collection<? extends Player> getOnlinePlayers()
+	{
+		return Bukkit.getOnlinePlayers();
 	}
 
 	private final UUID uuid;

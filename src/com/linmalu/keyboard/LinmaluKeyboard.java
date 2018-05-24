@@ -88,26 +88,26 @@ public enum LinmaluKeyboard
 	KEY_DECIMAL(0x53), /* . on numeric keypad */
 	KEY_F11(0x57),
 	KEY_F12(0x58),
-	KEY_F13(0x64), /*(NEC PC98) */
-	KEY_F14(0x65), /*(NEC PC98) */
-	KEY_F15(0x66), /*(NEC PC98) */
+	KEY_F13(0x64), /* (NEC PC98) */
+	KEY_F14(0x65), /* (NEC PC98) */
+	KEY_F15(0x66), /* (NEC PC98) */
 	KEY_F16(0x67), /* Extended Function keys -(Mac) */
 	KEY_F17(0x68),
 	KEY_F18(0x69),
-	KEY_KANA(0x70), /*(Japanese keyboard)            */
+	KEY_KANA(0x70), /* (Japanese keyboard) */
 	KEY_F19(0x71), /* Extended Function keys -(Mac) */
-	KEY_CONVERT(0x79), /*(Japanese keyboard)            */
-	KEY_NOCONVERT(0x7B), /*(Japanese keyboard)            */
-	KEY_YEN(0x7D), /*(Japanese keyboard)            */
+	KEY_CONVERT(0x79), /* (Japanese keyboard) */
+	KEY_NOCONVERT(0x7B), /* (Japanese keyboard) */
+	KEY_YEN(0x7D), /* (Japanese keyboard) */
 	KEY_NUMPADEQUALS(0x8D), /* = on numeric keypad(NEC PC98) */
-	KEY_CIRCUMFLEX(0x90), /*(Japanese keyboard)            */
-	KEY_AT(0x91), /*(NEC PC98) */
-	KEY_COLON(0x92), /*(NEC PC98) */
-	KEY_UNDERLINE(0x93), /*(NEC PC98) */
-	KEY_KANJI(0x94), /*(Japanese keyboard)            */
-	KEY_STOP(0x95), /*(NEC PC98) */
-	KEY_AX(0x96), /*(Japan AX) */
-	KEY_UNLABELED(0x97), /*(J3100) */
+	KEY_CIRCUMFLEX(0x90), /* (Japanese keyboard) */
+	KEY_AT(0x91), /* (NEC PC98) */
+	KEY_COLON(0x92), /* (NEC PC98) */
+	KEY_UNDERLINE(0x93), /* (NEC PC98) */
+	KEY_KANJI(0x94), /* (Japanese keyboard) */
+	KEY_STOP(0x95), /* (NEC PC98) */
+	KEY_AX(0x96), /* (Japan AX) */
+	KEY_UNLABELED(0x97), /* (J3100) */
 	KEY_NUMPADENTER(0x9C), /* Enter on numeric keypad */
 	KEY_RCONTROL(0x9D),
 	KEY_SECTION(0xA7), /* Section symbol(Mac) */

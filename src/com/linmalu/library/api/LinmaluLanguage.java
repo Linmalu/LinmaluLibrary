@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -16,10 +17,11 @@ import com.meowj.langutils.lang.convert.EnumEnchantmentLevel;
 import com.meowj.langutils.lang.convert.EnumEntity;
 import com.meowj.langutils.lang.convert.EnumItem;
 import com.meowj.langutils.lang.convert.EnumPotionEffect;
+import com.meowj.langutils.lang.convert.ItemEntry;
 
 public class LinmaluLanguage
 {
-	private static Map<String, String> map;
+	private static Map<String, String> map = new HashMap<>();
 
 	static
 	{
@@ -43,34 +45,42 @@ public class LinmaluLanguage
 
 	public static String translateToName(String name)
 	{
-		return map.get(name);
+		return name != null ? map.get(name) : null;
 	}
+	@Deprecated
 	public static String getTranslateItemStack(ItemStack item)
 	{
 		if(item.getType() == Material.POTION || item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION || item.getType() == Material.TIPPED_ARROW)
 		{
-			return EnumPotionEffect.get(item);
+			return EnumPotionEffect.getLocalizedName(item, "");
 		}
 		else if(item.getType() == Material.MONSTER_EGG)
 		{
-			return EnumEntity.getSpawnEggName(item);
+			return EnumEntity.getSpawnEggName(item, "");
 		}
 		else if(item.getType() == Material.SKULL_ITEM && item.getDurability() == 3)
 		{
-			return EnumItem.getPlayerSkullName(item);
+			return EnumItem.getPlayerSkullName(item, "");
 		}
-		return EnumItem.get(item);
+		else
+		{
+			EnumItem enumItem = EnumItem.get(new ItemEntry(item));
+			return translateToName(enumItem != null ? enumItem.getUnlocalizedName() : item.getType().toString());
+		}
 	}
+	@Deprecated
 	public static String getTranslateEnchantment(Enchantment enchantment)
 	{
-		return EnumEnchantment.get(enchantment);
+		return translateToName(EnumEnchantment.get(enchantment).getUnlocalizedName());
 	}
+	@Deprecated
 	public static String getTranslateEnchantmentLevel(int level)
 	{
-		return EnumEnchantmentLevel.get(level);
+		return translateToName(EnumEnchantmentLevel.get(level).getUnlocalizedName());
 	}
+	@Deprecated
 	public static String getTranslatePotion(PotionType effectType)
 	{
-		return EnumPotionEffect.get(effectType);
+		return translateToName(EnumPotionEffect.get(effectType).getUnlocalizedName());
 	}
 }
