@@ -102,10 +102,7 @@ public class LinmaluGlowing
 	}
 	public static boolean isGlowing(UUID player, UUID target)
 	{
-		synchronized(players)
-		{
-			return players.containsKey(player) && players.get(player).contains(target);
-		}
+		return players.containsKey(player) && players.get(player).contains(target);
 	}
 	public static void setGlowing(UUID target, boolean glowing)
 	{
@@ -121,76 +118,67 @@ public class LinmaluGlowing
 	}
 	public static void setGlowing(UUID player, UUID target, boolean glowing, ChatColor color)
 	{
-		synchronized(players)
+		if(!players.containsKey(player))
 		{
-			if(!players.containsKey(player))
+			players.put(player, new ArrayList<>());
+		}
+		Entity entity = Bukkit.getEntity(target);
+		if(entity != null)
+		{
+			if(glowing)
 			{
-				players.put(player, new ArrayList<>());
-			}
-			Entity entity = Bukkit.getEntity(target);
-			if(entity != null)
-			{
-				if(glowing)
+				if(!isGlowing(player, target))
 				{
-					if(!isGlowing(player, target))
-					{
-						players.get(player).add(target);
-					}
+					players.get(player).add(target);
+				}
+			}
+			else
+			{
+				players.get(player).remove(target);
+				if(players.get(player).isEmpty())
+				{
+					players.remove(player);
+				}
+			}
+			if(color != null)
+			{
+				String name = "Linmalu" + color.name();
+				Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(name);
+				if(team == null)
+				{
+					team = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(name);
+					team.setCanSeeFriendlyInvisibles(false);
+					team.setPrefix(color.toString());
+				}
+				if(entity.getType() == EntityType.PLAYER)
+				{
+					team.addEntry(((Player)entity).getName());
 				}
 				else
 				{
-					players.get(player).remove(target);
-					if(players.get(player).isEmpty())
-					{
-						players.remove(player);
-					}
+					team.addEntry(target.toString());
 				}
-				if(color != null)
-				{
-					String name = "Linmalu" + color.name();
-					Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(name);
-					if(team == null)
-					{
-						team = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(name);
-						team.setCanSeeFriendlyInvisibles(false);
-						team.setPrefix(color.toString());
-					}
-					if(entity.getType() == EntityType.PLAYER)
-					{
-						team.addEntry(((Player)entity).getName());
-					}
-					else
-					{
-						team.addEntry(target.toString());
-					}
-				}
-				Player p = Bukkit.getPlayer(player);
-				if(p != null)
-				{
-					WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
-					packet.setEntityID(entity.getEntityId());
-					packet.sendPacket(p);
-				}
+			}
+			Player p = Bukkit.getPlayer(player);
+			if(p != null)
+			{
+				WrapperPlayServerEntityMetadata packet = new WrapperPlayServerEntityMetadata();
+				packet.setEntityID(entity.getEntityId());
+				packet.sendPacket(p);
 			}
 		}
 	}
 	public static void clear()
 	{
-		synchronized(players)
-		{
-			new HashSet<>(players.keySet()).forEach(LinmaluGlowing::clear);
-		}
+		new HashSet<>(players.keySet()).forEach(LinmaluGlowing::clear);
 	}
 	public static void clear(UUID player)
 	{
-		synchronized(players)
+		Player p = Bukkit.getPlayer(player);
+		if(p != null)
 		{
-			Player p = Bukkit.getPlayer(player);
-			if(p != null)
-			{
-				new ArrayList<>(players.get(player)).stream().forEach(entity -> setGlowing(player, entity, false));
-			}
-			players.remove(player);
+			new ArrayList<>(players.get(player)).stream().forEach(entity -> setGlowing(player, entity, false));
 		}
+		players.remove(player);
 	}
 }

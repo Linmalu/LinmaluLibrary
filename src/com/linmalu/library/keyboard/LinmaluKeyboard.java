@@ -1,4 +1,4 @@
-package com.linmalu.keyboard;
+package com.linmalu.library.keyboard;
 
 public enum LinmaluKeyboard
 {
@@ -134,15 +134,15 @@ public enum LinmaluKeyboard
 	KEY_POWER(0xDE),
 	KEY_SLEEP(0xDF);
 
-	private int keyCode;
+	private byte key;
 
-	private LinmaluKeyboard(int keyCode)
+	private LinmaluKeyboard(int key)
 	{
-		this.keyCode = keyCode;
+		this.key = (byte)key;
 	}
-	public int getKeyCode()
+	public byte getKeyCode()
 	{
-		return keyCode;
+		return key;
 	}
 	@Override
 	public String toString()
@@ -150,11 +150,11 @@ public enum LinmaluKeyboard
 		return super.toString().replace("KEY_", "");
 	}
 
-	public static LinmaluKeyboard getLinmaluKeyboard(int keyCode)
+	public static LinmaluKeyboard getLinmaluKeyboard(byte key)
 	{
 		for(LinmaluKeyboard lk : values())
 		{
-			if(lk.keyCode == keyCode)
+			if(lk.key == key)
 			{
 				return lk;
 			}

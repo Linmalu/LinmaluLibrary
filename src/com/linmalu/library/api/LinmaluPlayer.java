@@ -66,23 +66,17 @@ public class LinmaluPlayer implements Runnable
 						for(PlayerInfoData data : packet.getData())
 						{
 							UUID uuid = data.getProfile().getUUID();
-							synchronized(players)
+							if(players.containsKey(uuid))
 							{
-								if(players.containsKey(uuid))
+								UUID skin = players.get(uuid).getSkin();
+								if(skins.containsKey(skin))
 								{
-									synchronized(skins)
-									{
-										UUID skin = players.get(uuid).getSkin();
-										if(skins.containsKey(skin))
-										{
-											list.add(skins.get(skin).getPlayerInfoData(data));
-										}
-									}
+									list.add(skins.get(skin).getPlayerInfoData(data));
 								}
-								else
-								{
-									list.add(data);
-								}
+							}
+							else
+							{
+								list.add(data);
 							}
 						}
 						packet.setData(list);
@@ -96,23 +90,17 @@ public class LinmaluPlayer implements Runnable
 			public void Event(AsyncPlayerChatEvent event)
 			{
 				UUID uuid = event.getPlayer().getUniqueId();
-				synchronized(players)
+				if(players.containsKey(uuid))
 				{
-					if(players.containsKey(uuid))
-					{
-						event.setFormat(event.getFormat().replace("%1$s", players.get(uuid).name + ChatColor.RESET));
-					}
+					event.setFormat(event.getFormat().replace("%1$s", players.get(uuid).name + ChatColor.RESET));
 				}
 			}
 		});
 	}
 	public static void clearPlayers()
 	{
-		synchronized(players)
-		{
-			players.entrySet().iterator().forEachRemaining(data -> changePlayer(data.getKey(), data.getKey()));
-			players.clear();
-		}
+		players.entrySet().iterator().forEachRemaining(data -> changePlayer(data.getKey(), data.getKey()));
+		players.clear();
 	}
 	public static void changeName(OfflinePlayer player, String name)
 	{
@@ -155,24 +143,21 @@ public class LinmaluPlayer implements Runnable
 			name = name.substring(0, 16);
 		}
 		name = ChatColor.translateAlternateColorCodes('&', name);
-		synchronized(players)
+		if(players.containsKey(uuid))
 		{
-			if(players.containsKey(uuid))
+			LinmaluPlayer lp = players.get(uuid);
+			if(lp.getName().equals(name) && lp.getSkin().equals(skin))
 			{
-				LinmaluPlayer lp = players.get(uuid);
-				if(lp.getName().equals(name) && lp.getSkin().equals(skin))
-				{
-					players.remove(uuid).start(name, skin);
-				}
-				else
-				{
-					players.get(uuid).start(name, skin);
-				}
+				players.remove(uuid).start(name, skin);
 			}
 			else
 			{
-				players.put(uuid, new LinmaluPlayer(uuid, name, skin));
+				players.get(uuid).start(name, skin);
 			}
+		}
+		else
+		{
+			players.put(uuid, new LinmaluPlayer(uuid, name, skin));
 		}
 	}
 	public static boolean addPotionEffect(Player player, PotionEffect potion)
@@ -199,6 +184,20 @@ public class LinmaluPlayer implements Runnable
 	{
 		return Bukkit.getOnlinePlayers();
 	}
+	public static List<Player> getPlayers(String name)
+	{
+		if(name.equals("@"))
+		{
+			return new ArrayList<>(Bukkit.getOnlinePlayers());
+		}
+		List<Player> players = new ArrayList<>();
+		Player player = Bukkit.getPlayer(name);
+		if(player != null)
+		{
+			players.add(player);
+		}
+		return players;
+	}
 
 	private final UUID uuid;
 	private String name;
@@ -214,22 +213,19 @@ public class LinmaluPlayer implements Runnable
 	{
 		this.name = name;
 		this.skin = skin;
-		synchronized(skins)
+		if(!skins.containsKey(skin))
 		{
-			if(!skins.containsKey(skin))
-			{
-				skins.put(skin, new LinmaluSkin());
-			}
-			LinmaluSkin ls = skins.get(skin);
-			if(ls.isTimeOut())
-			{
-				new Thread(this).start();
-			}
-			else
-			{
-				first = false;
-				run();
-			}
+			skins.put(skin, new LinmaluSkin());
+		}
+		LinmaluSkin ls = skins.get(skin);
+		if(ls.isTimeOut())
+		{
+			new Thread(this).start();
+		}
+		else
+		{
+			first = false;
+			run();
 		}
 	}
 	@Override
@@ -249,13 +245,10 @@ public class LinmaluPlayer implements Runnable
 					{
 						new JsonParser().parse(isr).getAsJsonObject().getAsJsonArray("properties").forEach(json ->
 						{
-							synchronized(skins)
+							if(skins.containsKey(skin))
 							{
-								if(skins.containsKey(skin))
-								{
-									JsonObject data = json.getAsJsonObject();
-									skins.get(skin).setWrappedSignedProperty(new WrappedSignedProperty(data.get("name").getAsString(), data.get("value").getAsString(), data.get("signature").getAsString()));
-								}
+								JsonObject data = json.getAsJsonObject();
+								skins.get(skin).setWrappedSignedProperty(new WrappedSignedProperty(data.get("name").getAsString(), data.get("value").getAsString(), data.get("signature").getAsString()));
 							}
 						});
 					}
@@ -275,12 +268,9 @@ public class LinmaluPlayer implements Runnable
 			{
 				WrapperPlayServerPlayerInfo info = new WrapperPlayServerPlayerInfo();
 				info.setAction(PlayerInfoAction.ADD_PLAYER);
-				synchronized(skins)
+				if(skins.containsKey(skin))
 				{
-					if(skins.containsKey(skin))
-					{
-						info.setData(Arrays.asList(skins.get(skin).getPlayerInfoData(player)));
-					}
+					info.setData(Arrays.asList(skins.get(skin).getPlayerInfoData(player)));
 				}
 				WrapperPlayServerRespawn respawn = new WrapperPlayServerRespawn();
 				respawn.setDifficulty(Difficulty.valueOf(player.getWorld().getDifficulty().toString()));

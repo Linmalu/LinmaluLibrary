@@ -4,10 +4,11 @@
  - HomePage : http://blog.linmalu.com/
  - Language : JAVA8
  - Spigot : spigot-1.12.2-R0.1-SNAPSHOT
- - Version : 1.12.2.1
+ - Version : 1.12.2.2
  
  ###업데이트
 - 버전 및 기능 업데이트
+- LinmaluLibraryMod 연동기능 추가
 
 ###소개
 - 플러그인에 이용되는 기능들을 따로 분류한 플러그인입니다.
