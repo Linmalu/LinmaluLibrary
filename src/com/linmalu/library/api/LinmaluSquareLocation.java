@@ -1,6 +1,5 @@
 package com.linmalu.library.api;
 
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -21,7 +20,7 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 	private World _world;
 	private double _x1, _y1, _z1, _x2, _y2, _z2;
 
-	public LinmaluSquareLocation(@NotNull World world, double x1, double y1, double z1, double x2, double y2, double z2)
+	public LinmaluSquareLocation(World world, double x1, double y1, double z1, double x2, double y2, double z2)
 	{
 		this._world = world;
 		this._x1 = x1;
@@ -34,8 +33,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * 월드 얻기
-	 *
-	 * @return
 	 */
 	public World getWorld()
 	{
@@ -44,11 +41,8 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * 월드 설정
-	 *
-	 * @param world
-	 * @return
 	 */
-	public LinmaluSquareLocation setWorld(@NotNull World world)
+	public LinmaluSquareLocation setWorld(World world)
 	{
 		_world = world;
 		return this;
@@ -56,8 +50,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * X1 얻기
-	 *
-	 * @return
 	 */
 	public double getX1()
 	{
@@ -66,9 +58,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * X1 설정
-	 *
-	 * @param x1
-	 * @return
 	 */
 	public LinmaluSquareLocation setX1(double x1)
 	{
@@ -78,8 +67,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Y1 얻기
-	 *
-	 * @return
 	 */
 	public double getY1()
 	{
@@ -88,9 +75,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Y1 설정
-	 *
-	 * @param y1
-	 * @return
 	 */
 	public LinmaluSquareLocation setY1(double y1)
 	{
@@ -100,8 +84,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Z1 얻기
-	 *
-	 * @return
 	 */
 	public double getZ1()
 	{
@@ -110,9 +92,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Z1 설정
-	 *
-	 * @param z1
-	 * @return
 	 */
 	public LinmaluSquareLocation setZ1(double z1)
 	{
@@ -122,8 +101,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * x2 얻기
-	 *
-	 * @return
 	 */
 	public double getX2()
 	{
@@ -132,9 +109,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * X2 설정
-	 *
-	 * @param x2
-	 * @return
 	 */
 	public LinmaluSquareLocation setX2(double x2)
 	{
@@ -144,8 +118,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Y2 얻기
-	 *
-	 * @return
 	 */
 	public double getY2()
 	{
@@ -154,9 +126,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Y2 설정
-	 *
-	 * @param y2
-	 * @return
 	 */
 	public LinmaluSquareLocation setY2(double y2)
 	{
@@ -166,8 +135,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Z2 얻기
-	 *
-	 * @return
 	 */
 	public double getZ2()
 	{
@@ -176,9 +143,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 
 	/**
 	 * Z2 설정
-	 *
-	 * @param z2
-	 * @return
 	 */
 	public LinmaluSquareLocation setZ2(double z2)
 	{

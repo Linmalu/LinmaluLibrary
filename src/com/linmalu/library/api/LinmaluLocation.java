@@ -1,6 +1,5 @@
 package com.linmalu.library.api;
 
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,26 +19,23 @@ public class LinmaluLocation extends Location implements ConfigurationSerializab
 
 	/**
 	 * LinmaluLocation 변환하기
-	 *
-	 * @param loc
-	 * @return
 	 */
-	public static LinmaluLocation getLinmaluLocation(@NotNull Location loc)
+	public static LinmaluLocation getLinmaluLocation(Location loc)
 	{
 		return new LinmaluLocation(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
 	}
 
-	public LinmaluLocation(@NotNull World world, double x, double y, double z)
+	public LinmaluLocation(World world, double x, double y, double z)
 	{
 		super(world, x, y, z);
 	}
 
-	public LinmaluLocation(@NotNull World world, double x, double y, double z, float yaw, float pitch)
+	public LinmaluLocation(World world, double x, double y, double z, float yaw, float pitch)
 	{
 		super(world, x, y, z, yaw, pitch);
 	}
 
-	public static LinmaluLocation deserialize(@NotNull Map<String, Object> map)
+	public static LinmaluLocation deserialize(Map<String, Object> map)
 	{
 		World world = Bukkit.getWorld((String)map.get(WORLD));
 		if(world == null)

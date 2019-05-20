@@ -2,7 +2,6 @@ package com.linmalu.library.api;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,10 +21,8 @@ public class LinmaluServer
 {
 	/**
 	 * 플러그인 확인
-	 *
-	 * @param plugin
 	 */
-	public static void md5(@NotNull LinmaluMain plugin)
+	public static void md5(LinmaluMain plugin)
 	{
 		boolean result = false;
 		String[] names = plugin.getClass().getPackage().getName().split("\\.");
@@ -81,11 +78,8 @@ public class LinmaluServer
 
 	/**
 	 * 최신 버전 확인
-	 *
-	 * @param plugin
-	 * @param sender
 	 */
-	public static void version(@NotNull LinmaluMain plugin, @NotNull CommandSender sender)
+	public static void version(LinmaluMain plugin, CommandSender sender)
 	{
 		new Thread(() ->
 		{

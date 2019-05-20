@@ -1,26 +1,22 @@
 package com.linmalu.library.api;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
-import com.sun.istack.internal.NotNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.linmalu.library.LinmaluLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.linmalu.library.LinmaluLibrary;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class LinmaluBlacklist
 {
 	/**
 	 * 블랙리스트 체크
-	 *
-	 * @param player
 	 */
-	public static void Check(@NotNull Player player)
+	public static void Check(Player player)
 	{
 		new Thread(() ->
 		{

@@ -1,10 +1,11 @@
 package com.linmalu.library.api;
 
 import com.linmalu.library.LinmaluLibrary;
-import com.sun.istack.internal.NotNull;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
@@ -17,12 +18,8 @@ public class LinmaluPlayer
 {
 	/**
 	 * 포션 효과 추가하기
-	 *
-	 * @param player
-	 * @param potion
-	 * @return
 	 */
-	public static boolean addPotionEffect(@NotNull Player player, @NotNull PotionEffect potion)
+	public static boolean addPotionEffect(Player player, PotionEffect potion)
 	{
 		if(!player.hasPotionEffect(potion.getType()))
 		{
@@ -43,8 +40,6 @@ public class LinmaluPlayer
 
 	/**
 	 * 접속중인 플레이어들 얻기
-	 *
-	 * @return
 	 */
 	public static Collection<? extends Player> getOnlinePlayers()
 	{
@@ -58,11 +53,8 @@ public class LinmaluPlayer
 
 	/**
 	 * 플레이어 얻기
-	 *
-	 * @param name
-	 * @return
 	 */
-	public static Collection<? extends Player> getPlayers(@NotNull String name)
+	public static Collection<? extends Player> getPlayers(String name)
 	{
 		if(name.equals("@"))
 		{
@@ -79,32 +71,55 @@ public class LinmaluPlayer
 
 	/**
 	 * 리스폰 하기
-	 *
-	 * @param player
 	 */
-	public static void Respawn(@NotNull Player player)
+	public static void Respawn(Player player)
 	{
 		Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getInstance(), () -> player.spigot().respawn());
 	}
 
 	/**
 	 * 액션바 메시지 전체플레이어에게 보내기
-	 *
-	 * @param message
 	 */
-	public static void SendActionBarMessage(@NotNull String message)
+	public static void sendActionBarMessage(String message)
 	{
-		Bukkit.getOnlinePlayers().forEach(player -> SendActionBarMessage(player, message));
+		Bukkit.getOnlinePlayers().forEach(player -> sendActionBarMessage(player, message));
 	}
 
 	/**
 	 * 액션바 메시지 플레이어에게 보내기
-	 *
-	 * @param player
-	 * @param message
 	 */
-	public static void SendActionBarMessage(@NotNull Player player, @NotNull String message)
+	public static void sendActionBarMessage(Player player, String message)
 	{
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+	}
+
+	/**
+	 * 도움말 메시지 보내기
+	 */
+	public static void sendHelpMessage(CommandSender sender, String title, int size, int page, String... messages)
+	{
+		if(size < 1)
+		{
+			size = messages.length < 1 ? 1 : messages.length;
+		}
+		if(page < 1)
+		{
+			page = 1;
+		}
+		int maxPage = messages.length / size;
+		if(messages.length % size != 0)
+		{
+			++maxPage;
+		}
+		if(page > maxPage)
+		{
+			page = maxPage;
+		}
+		sender.sendMessage(ChatColor.AQUA + " - - - - - [ " + title + ChatColor.RESET + " (" + ChatColor.YELLOW + page + ChatColor.RESET + "/" + ChatColor.GOLD + maxPage + ChatColor.RESET + ")" + ChatColor.AQUA + " ] - - - - - ");
+		for(String message : messages)
+		{
+			sender.sendMessage(message);
+		}
+		sender.sendMessage(ChatColor.YELLOW + "제작자 : " + ChatColor.AQUA + "린마루(Linmalu)" + ChatColor.WHITE + " - http://blog.linmalu.com");
 	}
 }

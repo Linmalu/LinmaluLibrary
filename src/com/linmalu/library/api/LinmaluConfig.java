@@ -1,8 +1,6 @@
 package com.linmalu.library.api;
 
 import com.linmalu.library.LinmaluLibrary;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -19,9 +17,9 @@ import java.util.concurrent.BlockingQueue;
 public class LinmaluConfig extends YamlConfiguration
 {
 	private static boolean _run = false;
+	private static LinmaluConfig _linmaluConfig = null;
 	private static Thread _linmaluConfigThread = null;
-	private static BlockingQueue<LinmaluConfig> _linmaluConfigQueue = new ArrayBlockingQueue<>(10000);
-	private static LinmaluConfig _config = new LinmaluConfig();
+	private static BlockingQueue<LinmaluConfig> _linmaluConfigQueue = null;
 
 	/**
 	 * 초기화
@@ -35,7 +33,8 @@ public class LinmaluConfig extends YamlConfiguration
 		_run = true;
 		ConfigurationSerialization.registerClass(LinmaluLocation.class);
 		ConfigurationSerialization.registerClass(LinmaluSquareLocation.class);
-		_linmaluConfigQueue.clear();
+		_linmaluConfig = new LinmaluConfig();
+		_linmaluConfigQueue = new ArrayBlockingQueue<>(10000);
 		_linmaluConfigThread = new Thread(() ->
 		{
 			while(true)
@@ -43,7 +42,7 @@ public class LinmaluConfig extends YamlConfiguration
 				try
 				{
 					LinmaluConfig config = _linmaluConfigQueue.take();
-					if(config == _config)
+					if(config == _linmaluConfig)
 					{
 						break;
 					}
@@ -72,15 +71,17 @@ public class LinmaluConfig extends YamlConfiguration
 		ConfigurationSerialization.unregisterClass(LinmaluSquareLocation.class);
 		try
 		{
-			_linmaluConfigQueue.put(_config);
+			_linmaluConfigQueue.put(_linmaluConfig);
 			_linmaluConfigThread.join();
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		_linmaluConfigQueue.clear();
 		_linmaluConfigThread = null;
+		_linmaluConfigQueue.clear();
+		_linmaluConfigQueue = null;
+		_linmaluConfig = null;
 	}
 
 	private final File _file;
@@ -91,12 +92,12 @@ public class LinmaluConfig extends YamlConfiguration
 		_file = null;
 	}
 
-	public LinmaluConfig(@NotNull File file)
+	public LinmaluConfig(File file)
 	{
 		this(file, true);
 	}
 
-	public LinmaluConfig(@NotNull File file, boolean autoSave)
+	public LinmaluConfig(File file, boolean autoSave)
 	{
 		_file = file;
 		_autoSave = autoSave;
@@ -105,8 +106,6 @@ public class LinmaluConfig extends YamlConfiguration
 
 	/**
 	 * 자동저장 유무 확인
-	 *
-	 * @return
 	 */
 	public boolean isAutoSave()
 	{
@@ -115,8 +114,6 @@ public class LinmaluConfig extends YamlConfiguration
 
 	/**
 	 * 자동저장 설정
-	 *
-	 * @param autoSave
 	 */
 	public void setAutoSave(boolean autoSave)
 	{
@@ -126,11 +123,9 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * 리스트 형태의 값 가져오기
 	 *
-	 * @param path
-	 * @param <T>
 	 * @return Null Or Value
 	 */
-	public <T> List<T> getListData(@NotNull String path)
+	public <T> List<T> getListData(String path)
 	{
 		return getListData(path, null);
 	}
@@ -138,12 +133,10 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * 리스트 형태의 값 가져오기(실패시 기본값)
 	 *
-	 * @param path
-	 * @param def
-	 * @param <T>
+	 * @param def Null Or Value
 	 * @return Null Or Value
 	 */
-	public <T> List<T> getListData(@NotNull String path, @Nullable List<T> def)
+	public <T> List<T> getListData(String path, List<T> def)
 	{
 		try
 		{
@@ -158,11 +151,10 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * 값 설정
 	 *
-	 * @param path
-	 * @param value
+	 * @param value Null Or Value
 	 */
 	@Override
-	public void set(@NotNull String path, @Nullable Object value)
+	public void set(String path, Object value)
 	{
 		super.set(path, value);
 		if(_autoSave)
@@ -173,10 +165,8 @@ public class LinmaluConfig extends YamlConfiguration
 
 	/**
 	 * 값 삭제
-	 *
-	 * @param key
 	 */
-	public void remove(@NotNull String key)
+	public void remove(String key)
 	{
 		set(key, null);
 	}
@@ -220,11 +210,8 @@ public class LinmaluConfig extends YamlConfiguration
 
 	/**
 	 * LinmaluLocation 확인
-	 *
-	 * @param path
-	 * @return
 	 */
-	public boolean isLinmaluLocation(@NotNull String path)
+	public boolean isLinmaluLocation(String path)
 	{
 		return isSet(path) && get(path) instanceof LinmaluLocation;
 	}
@@ -232,10 +219,9 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * LinmaluLocation 가져오기
 	 *
-	 * @param path
 	 * @return Null Or Value
 	 */
-	public LinmaluLocation getLinmaluLocation(@NotNull String path)
+	public LinmaluLocation getLinmaluLocation(String path)
 	{
 		return getLinmaluLocation(path, null);
 	}
@@ -243,11 +229,10 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * LinmaluLocation 가져오기(실패시 기본값)
 	 *
-	 * @param path
-	 * @param def
+	 * @param def Null Or Value
 	 * @return Null Or Value
 	 */
-	public LinmaluLocation getLinmaluLocation(@NotNull String path, @Nullable LinmaluLocation def)
+	public LinmaluLocation getLinmaluLocation(String path, LinmaluLocation def)
 	{
 		if(isLinmaluLocation(path))
 		{
@@ -258,11 +243,8 @@ public class LinmaluConfig extends YamlConfiguration
 
 	/**
 	 * LinmaluSquareLocation 확인
-	 *
-	 * @param path
-	 * @return
 	 */
-	public boolean isLinmaluSquareLocation(@NotNull String path)
+	public boolean isLinmaluSquareLocation(String path)
 	{
 		return isSet(path) && get(path) instanceof LinmaluSquareLocation;
 	}
@@ -270,10 +252,9 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * LinmaluSquareLocation 가져오기
 	 *
-	 * @param path
 	 * @return Null Or Value
 	 */
-	public LinmaluSquareLocation getLinmaluSquareLocation(@NotNull String path)
+	public LinmaluSquareLocation getLinmaluSquareLocation(String path)
 	{
 		return getLinmaluSquareLocation(path, null);
 	}
@@ -281,11 +262,10 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * LinmaluSquareLocation 가져오기(실패시 기본값)
 	 *
-	 * @param path
-	 * @param def
+	 * @param def Null Or Value
 	 * @return Null Or Value
 	 */
-	public LinmaluSquareLocation getLinmaluSquareLocation(@NotNull String path, @Nullable LinmaluSquareLocation def)
+	public LinmaluSquareLocation getLinmaluSquareLocation(String path, LinmaluSquareLocation def)
 	{
 		if(isLinmaluSquareLocation(path))
 		{
