@@ -1,9 +1,5 @@
 package com.linmalu.library.api;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,7 +12,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
-import com.meowj.langutils.lang.LanguageHelper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class LinmaluTellraw
 {
@@ -24,6 +22,7 @@ public class LinmaluTellraw
 	{
 		new LinmaluTellraw("$AT:" + msg + "|" + cmd + "|" + text + "$").changeChatText().sendMessage(sender);
 	}
+
 	public static void sendChat(CommandSender sender, String cmd, String msg)
 	{
 		if(sender instanceof Player)
@@ -35,14 +34,17 @@ public class LinmaluTellraw
 			sender.sendMessage(msg);
 		}
 	}
+
 	public static void sendCmdText(CommandSender sender, String cmd, String msg, String text)
 	{
 		new LinmaluTellraw("$CT:" + msg + "|" + cmd + "|" + text + "$").changeCmdText().sendMessage(sender);
 	}
+
 	public static void sendCmd(CommandSender sender, String cmd, String msg)
 	{
 		sendCmdText(sender, cmd, msg, ChatColor.GREEN + "클릭시 명령어가 입력됩니다." + ChatColor.GRAY + " - " + ChatColor.GOLD + cmd);
 	}
+
 	public static void sendItem(CommandSender sender, ItemStack item, String msg)
 	{
 		new LinmaluTellraw(new LinmaluTellraw().getItem(item, msg, "")).sendMessage(sender);
@@ -55,61 +57,69 @@ public class LinmaluTellraw
 	private static final String[] cmdTexts = new String[]{"$CMDTEXT:", "$CT:", "$명령어텍스트:"};
 	private static final String[] chatTexts = new String[]{"$CHATTEXT:", "$AT:", "$채팅텍스트:"};
 
-	private boolean change = false;
-	private String msg;
+	private boolean _change = false;
+	private String _msg;
 
 	public LinmaluTellraw()
 	{
-		msg = "";
+		_msg = "";
 	}
+
 	public LinmaluTellraw(String msg)
 	{
-		this.msg = msg;
+		this._msg = msg;
 	}
+
 	public LinmaluTellraw setMessage(String msg)
 	{
-		this.msg = msg;
+		this._msg = msg;
 		return this;
 	}
-	public boolean isChange()
+
+	public boolean is_change()
 	{
-		return change;
+		return _change;
 	}
+
 	public <T extends CommandSender> void sendMessage(List<T> list)
 	{
 		list.forEach(sender -> sendMessage(sender));
 	}
+
 	public <T extends CommandSender> void sendMessage(Set<T> list)
 	{
 		list.forEach(sender -> sendMessage(sender));
 	}
-	public void sendMessage(CommandSender ... list)
+
+	public void sendMessage(CommandSender... list)
 	{
 		Arrays.stream(list).forEach(sender ->
 		{
 			if(sender instanceof Player)
 			{
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " {\"text\":\"\",\"extra\":[{\"text\":\"" + msg + "\"}]}");
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " {\"text\":\"\",\"extra\":[{\"text\":\"" + _msg + "\"}]}");
+				System.out.println(" {\"text\":\"\",\"extra\":[{\"text\":\"" + _msg + "\"}]}");
 			}
 			else
 			{
-				sender.sendMessage(msg);
+				sender.sendMessage(_msg);
 			}
 		});
 	}
+
 	public LinmaluTellraw changeItem(Player player)
 	{
 		for(String cmd : items)
 		{
 			while(true)
 			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
+				int i1 = _msg.indexOf(cmd);
+				int i2 = _msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 + 1);
+				String sub = _msg.substring(i1, i2 + 1);
 				boolean find = false;
 				for(int i = 1; i < 10; i++)
 				{
@@ -117,71 +127,74 @@ public class LinmaluTellraw
 					{
 						find = true;
 						String display = sub.replace(cmd + i + ":", "").replace(cmd + i, "").replace("$", "").replace("&", "§");
-						msg = msg.replace(sub, getItem(player.getInventory().getItem(i - 1), display, ""));
+						_msg = _msg.replace(sub, getItem(player.getInventory().getItem(i - 1), display, ""));
 						break;
 					}
 				}
 				if(!find)
 				{
 					String display = sub.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "§");
-					msg = msg.replace(sub, getItem(player.getInventory().getItemInMainHand(), display, ""));
+					_msg = _msg.replace(sub, getItem(player.getInventory().getItemInMainHand(), display, ""));
 				}
-				change = true;
+				_change = true;
 			}
 		}
 		return this;
 	}
+
 	public LinmaluTellraw changeText()
 	{
 		for(String cmd : texts)
 		{
 			while(true)
 			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
+				int i1 = _msg.indexOf(cmd);
+				int i2 = _msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 + 1);
-				msg = msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
-				change = true;
+				String sub = _msg.substring(i1, i2 + 1);
+				_msg = _msg.replace(sub, getText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				_change = true;
 			}
 		}
 		return this;
 	}
+
 	public LinmaluTellraw changeCmd()
 	{
 		for(String cmd : cmds)
 		{
 			while(true)
 			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
+				int i1 = _msg.indexOf(cmd);
+				int i2 = _msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 + 1);
-				msg = msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
-				change = true;
+				String sub = _msg.substring(i1, i2 + 1);
+				_msg = _msg.replace(sub, getCmd(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				_change = true;
 			}
 		}
 		return this;
 	}
+
 	public LinmaluTellraw changeCmdItem(Player player)
 	{
 		for(String cmd : itemCmds)
 		{
 			while(true)
 			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
+				int i1 = _msg.indexOf(cmd);
+				int i2 = _msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 + 1);
+				String sub = _msg.substring(i1, i2 + 1);
 				boolean find = false;
 				String ci = getCmdItem(sub.replace("$", "").replace("&", "§"));
 				String display = sub.split("\\|")[0];
@@ -191,59 +204,61 @@ public class LinmaluTellraw
 					{
 						find = true;
 						display = display.replace(cmd + i + ":", "").replace(cmd + i, "").replace("$", "").replace("&", "§");
-						msg = msg.replace(sub, getItem(player.getInventory().getItem(i - 1), display, ci));
+						_msg = _msg.replace(sub, getItem(player.getInventory().getItem(i - 1), display, ci));
 						break;
 					}
 				}
 				if(!find)
 				{
 					display = display.replace(cmd + ":", "").replace(cmd, "").replace("$", "").replace("&", "§");
-					msg = msg.replace(sub, getItem(player.getInventory().getItemInMainHand(), display, ci));
+					_msg = _msg.replace(sub, getItem(player.getInventory().getItemInMainHand(), display, ci));
 				}
-				change = true;
+				_change = true;
 			}
 		}
 		return this;
 	}
+
 	public LinmaluTellraw changeCmdText()
 	{
 		for(String cmd : cmdTexts)
 		{
 			while(true)
 			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
+				int i1 = _msg.indexOf(cmd);
+				int i2 = _msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 + 1);
-				msg = msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
-				change = true;
+				String sub = _msg.substring(i1, i2 + 1);
+				_msg = _msg.replace(sub, getCmdText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				_change = true;
 			}
 		}
 		return this;
 	}
+
 	public LinmaluTellraw changeChatText()
 	{
 		for(String cmd : chatTexts)
 		{
 			while(true)
 			{
-				int i1 = msg.indexOf(cmd);
-				int i2 = msg.indexOf("$", i1 + 1);
+				int i1 = _msg.indexOf(cmd);
+				int i2 = _msg.indexOf("$", i1 + 1);
 				if(i1 == -1 || i2 == -1)
 				{
 					break;
 				}
-				String sub = msg.substring(i1, i2 + 1);
-				msg = msg.replace(sub, getChatText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
-				change = true;
+				String sub = _msg.substring(i1, i2 + 1);
+				_msg = _msg.replace(sub, getChatText(sub.replace(cmd, "").replace("$", "").replace("&", "§")));
+				_change = true;
 			}
 		}
 		return this;
 	}
-	@SuppressWarnings("deprecation")
+
 	private String getItem(ItemStack item, String msg, String cmd)
 	{
 		if(item == null || item.getType() == Material.AIR)
@@ -264,12 +279,7 @@ public class LinmaluTellraw
 		}
 		else
 		{
-//			String itemName = LinmaluLanguage.getTranslateItemStack(item);
-			String itemName = LanguageHelper.getItemDisplayName(item, "");
-			if(itemName == null)
-			{
-				itemName = item.getType().toString();
-			}
+			String itemName = item.getType().toString();
 			display = ChatColor.AQUA + "[" + itemName + "]";
 		}
 		count = true;
@@ -307,7 +317,7 @@ public class LinmaluTellraw
 				{
 					ench.append(", ");
 				}
-				ench.append("{id:" + en.getId() + ", lvl:" + im.getEnchantLevel(en) + "}");
+				ench.append("{id:" + en.getKey().getKey() + ", lvl:" + im.getEnchantLevel(en) + "}");
 			}
 		}
 		if(im instanceof EnchantmentStorageMeta)
@@ -323,7 +333,7 @@ public class LinmaluTellraw
 				{
 					ench.append(", ");
 				}
-				ench.append("{id:" + en.getId() + ", lvl:" + esm.getStoredEnchantLevel(en) + "}");
+				ench.append("{id:" + en.getKey().getKey() + ", lvl:" + esm.getStoredEnchantLevel(en) + "}");
 			}
 		}
 		count = true;
@@ -349,9 +359,9 @@ public class LinmaluTellraw
 			display = msg;
 		}
 		display = display.replace("\"", "\\\"");
-		return "\"}, {\"text\":\"" + display + "\"" + cmd + ", \"hoverEvent\":{\"action\":\"show_item\", \"value\":\"{id:\\\"" + item.getTypeId() + "\\\", Damage:" + item.getDurability() + ", tag:{display:{" + name + lore + "}, ench:["
-				+ ench + "]" + potion + "}}\"}}, {\"text\":\"";
+		return "\"}, {\"text\":\"" + display + "\"" + cmd + ", \"hoverEvent\":{\"action\":\"show_item\", \"value\":\"{id:\\\"" + item.getType().getId() + "\\\",Count:1, Damage:" + item.getDurability() + ", tag:{display:{" + name + lore + "}, ench:[" + ench + "]" + potion + "}}\"}}, {\"text\":\"";
 	}
+
 	private String getText(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
@@ -366,6 +376,7 @@ public class LinmaluTellraw
 		}
 		return "\"}, {\"text\":\"" + display + "\"" + msg + "}, {\"text\":\"";
 	}
+
 	private String getCmd(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
@@ -380,6 +391,7 @@ public class LinmaluTellraw
 		}
 		return "\"}, {\"text\":\"" + display + "\"" + msg + "}, {\"text\":\"";
 	}
+
 	private String getCmdItem(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
@@ -393,6 +405,7 @@ public class LinmaluTellraw
 		}
 		return msg;
 	}
+
 	private String getCmdText(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");
@@ -416,6 +429,7 @@ public class LinmaluTellraw
 		}
 		return "\"}, {\"text\":\"" + display + "\"" + cmd + msg + "}, {\"text\":\"";
 	}
+
 	private String getChatText(String msg)
 	{
 		String[] msgs = msg.replace("\"", "\\\"").split("\\|");

@@ -1,5 +1,13 @@
 package com.linmalu.library.api;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sun.istack.internal.NotNull;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.OutputStreamWriter;
@@ -10,17 +18,14 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.Scanner;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 public class LinmaluServer
 {
-	public static void md5(LinmaluMain plugin)
+	/**
+	 * 플러그인 확인
+	 *
+	 * @param plugin
+	 */
+	public static void md5(@NotNull LinmaluMain plugin)
 	{
 		boolean result = false;
 		String[] names = plugin.getClass().getPackage().getName().split("\\.");
@@ -73,7 +78,14 @@ public class LinmaluServer
 			});
 		}
 	}
-	public static void version(LinmaluMain plugin, CommandSender sender)
+
+	/**
+	 * 최신 버전 확인
+	 *
+	 * @param plugin
+	 * @param sender
+	 */
+	public static void version(@NotNull LinmaluMain plugin, @NotNull CommandSender sender)
 	{
 		new Thread(() ->
 		{
@@ -106,30 +118,6 @@ public class LinmaluServer
 					{
 						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> sender.sendMessage(plugin.getTitle() + ChatColor.GREEN + "최신버전이 존재합니다."));
 					}
-				}
-			}
-			catch(Exception e)
-			{
-			}
-		}).start();
-	}
-	public static void report(LinmaluMain plugin, String title, String message)
-	{
-		new Thread(() ->
-		{
-			try
-			{
-				URLConnection url = new URL("http://minecraft.linmalu.com/minecraft/report.html").openConnection();
-				url.setDoOutput(true);
-				try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(url.getOutputStream())))
-				{
-					bw.write("name=" + plugin.getDescription().getName());
-					bw.write("&version=" + plugin.getDescription().getVersion());
-					bw.write("&bukkit=" + Bukkit.getVersion());
-					bw.write("&java=" + System.getProperty("java.version"));
-					bw.write("&title=" + title);
-					bw.write("&message=" + message);
-					bw.flush();
 				}
 			}
 			catch(Exception e)

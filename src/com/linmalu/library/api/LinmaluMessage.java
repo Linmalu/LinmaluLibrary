@@ -5,12 +5,14 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+@Deprecated
 public class LinmaluMessage
 {
 	public static void sendHelpMessage(CommandSender sender, String title, List<String> messages, int size, int page)
 	{
 		sendHelpMessage(sender, title, messages, ChatColor.RESET, size, page);
 	}
+
 	public static void sendHelpMessage(CommandSender sender, String title, List<String> messages, ChatColor color, int size, int page)
 	{
 		if(size < 1)

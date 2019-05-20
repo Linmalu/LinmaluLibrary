@@ -1,14 +1,7 @@
 package com.linmalu.library;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-
-import com.linmalu.library.api.LinmaluGlowing;
-import com.linmalu.library.api.LinmaluLocation;
+import com.linmalu.library.api.LinmaluConfig;
 import com.linmalu.library.api.LinmaluMain;
-import com.linmalu.library.api.LinmaluPlayer;
-import com.linmalu.library.api.LinmaluSquareLocation;
-import com.linmalu.library.network.LinmaluNetwork;
 
 public class LinmaluLibrary extends LinmaluMain
 {
@@ -17,11 +10,13 @@ public class LinmaluLibrary extends LinmaluMain
 	{
 		super.onEnable();
 		registerEvents(new Main_Event());
-		Bukkit.getMessenger().registerOutgoingPluginChannel(this, LinmaluNetwork.CHANNEL);
-		Bukkit.getMessenger().registerIncomingPluginChannel(this, LinmaluNetwork.CHANNEL, LinmaluNetwork.getInstance());
-		ConfigurationSerialization.registerClass(LinmaluLocation.class);
-		ConfigurationSerialization.registerClass(LinmaluSquareLocation.class);
-		LinmaluPlayer.initialization();
-		LinmaluGlowing.initialization();
+		LinmaluConfig.Initialize();
+	}
+
+	@Override
+	public void onDisable()
+	{
+		super.onDisable();
+		LinmaluConfig.Close();
 	}
 }

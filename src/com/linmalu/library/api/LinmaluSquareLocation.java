@@ -1,11 +1,12 @@
 package com.linmalu.library.api;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LinmaluSquareLocation implements ConfigurationSerializable
 {
@@ -17,143 +18,195 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 	private static String Y2 = "y2";
 	private static String Z2 = "z2";
 
-	private World world;
-	private double x1, y1, z1, x2, y2, z2;
+	private World _world;
+	private double _x1, _y1, _z1, _x2, _y2, _z2;
 
-	public LinmaluSquareLocation(World world, double x, double y, double z)
+	public LinmaluSquareLocation(@NotNull World world, double x1, double y1, double z1, double x2, double y2, double z2)
 	{
-		this(world, x, y, z, x, y, z);
+		this._world = world;
+		this._x1 = x1;
+		this._y1 = y1;
+		this._z1 = z1;
+		this._x2 = x2;
+		this._y2 = y2;
+		this._z2 = z2;
 	}
-	public LinmaluSquareLocation(World world, double x1, double y1, double z1, double x2, double y2, double z2)
-	{
-		this.world = world;
-		this.x1 = x1;
-		this.y1 = y1;
-		this.z1 = z1;
-		this.x2 = x2;
-		this.y2 = y2;
-		this.z2 = z2;
-		sort();
-	}
+
+	/**
+	 * 월드 얻기
+	 *
+	 * @return
+	 */
 	public World getWorld()
 	{
-		return world;
+		return _world;
 	}
-	public void setWorld(World world)
+
+	/**
+	 * 월드 설정
+	 *
+	 * @param world
+	 * @return
+	 */
+	public LinmaluSquareLocation setWorld(@NotNull World world)
 	{
-		this.world = world;
+		_world = world;
+		return this;
 	}
+
+	/**
+	 * X1 얻기
+	 *
+	 * @return
+	 */
 	public double getX1()
 	{
-		return x1;
+		return _x1;
 	}
-	public void setX1(double x1)
+
+	/**
+	 * X1 설정
+	 *
+	 * @param x1
+	 * @return
+	 */
+	public LinmaluSquareLocation setX1(double x1)
 	{
-		this.x1 = x1;
-		sort();
+		_x1 = x1;
+		return this;
 	}
+
+	/**
+	 * Y1 얻기
+	 *
+	 * @return
+	 */
 	public double getY1()
 	{
-		return y1;
+		return _y1;
 	}
-	public void setY1(double y1)
+
+	/**
+	 * Y1 설정
+	 *
+	 * @param y1
+	 * @return
+	 */
+	public LinmaluSquareLocation setY1(double y1)
 	{
-		this.y1 = y1;
-		sort();
+		_y1 = y1;
+		return this;
 	}
+
+	/**
+	 * Z1 얻기
+	 *
+	 * @return
+	 */
 	public double getZ1()
 	{
-		return z1;
+		return _z1;
 	}
-	public void setZ1(double z1)
+
+	/**
+	 * Z1 설정
+	 *
+	 * @param z1
+	 * @return
+	 */
+	public LinmaluSquareLocation setZ1(double z1)
 	{
-		this.z1 = z1;
-		sort();
+		_z1 = z1;
+		return this;
 	}
+
+	/**
+	 * x2 얻기
+	 *
+	 * @return
+	 */
 	public double getX2()
 	{
-		return x2;
+		return _x2;
 	}
-	public void setX2(double x2)
+
+	/**
+	 * X2 설정
+	 *
+	 * @param x2
+	 * @return
+	 */
+	public LinmaluSquareLocation setX2(double x2)
 	{
-		this.x2 = x2;
-		sort();
+		_x2 = x2;
+		return this;
 	}
+
+	/**
+	 * Y2 얻기
+	 *
+	 * @return
+	 */
 	public double getY2()
 	{
-		return y2;
+		return _y2;
 	}
-	public void setY2(double y2)
+
+	/**
+	 * Y2 설정
+	 *
+	 * @param y2
+	 * @return
+	 */
+	public LinmaluSquareLocation setY2(double y2)
 	{
-		this.y2 = y2;
-		sort();
+		_y2 = y2;
+		return this;
 	}
+
+	/**
+	 * Z2 얻기
+	 *
+	 * @return
+	 */
 	public double getZ2()
 	{
-		return z2;
+		return _z2;
 	}
-	public void setZ2(double z2)
+
+	/**
+	 * Z2 설정
+	 *
+	 * @param z2
+	 * @return
+	 */
+	public LinmaluSquareLocation setZ2(double z2)
 	{
-		this.z2 = z2;
-		sort();
+		_z2 = z2;
+		return this;
 	}
-	public void setX(double x)
+
+	public static LinmaluSquareLocation deserialize(Map<String, Object> map)
 	{
-		x1 = x2 = x;
-	}
-	public void setY(double y)
-	{
-		y1 = y2 = y;
-	}
-	public void setZ(double z)
-	{
-		z1 = z2 = z;
-	}
-	private void sort()
-	{
-		if(x1 > x2)
+		World world = Bukkit.getWorld((String)map.get(WORLD));
+		if(world == null)
 		{
-			double x = x1;
-			x1 = x2;
-			x2 = x;
+			return null;
 		}
-		if(y1 > y2)
-		{
-			double y = y1;
-			y1 = y2;
-			y2 = y;
-		}
-		if(z1 > z2)
-		{
-			double z = z1;
-			z1 = z2;
-			z2 = z;
-		}
+		return new LinmaluSquareLocation(world, (double)map.get(X1), (double)map.get(Y1), (double)map.get(Z1), (double)map.get(X2), (double)map.get(Y2), (double)map.get(Z2));
 	}
+
 	@Override
 	public Map<String, Object> serialize()
 	{
 		Map<String, Object> map = new LinkedHashMap<>();
-		map.put(WORLD, world.getName());
-		map.put(X1, x1);
-		map.put(Y1, y1);
-		map.put(Z1, z1);
-		map.put(X2, x2);
-		map.put(Y2, y2);
-		map.put(Z2, z2);
+		map.put(WORLD, _world.getName());
+		map.put(X1, _x1);
+		map.put(Y1, _y1);
+		map.put(Z1, _z1);
+		map.put(X2, _x2);
+		map.put(Y2, _y2);
+		map.put(Z2, _z2);
 		return map;
-	}
-	public static LinmaluSquareLocation deserialize(Map<String, Object> map)
-	{
-		World world = null;
-		if(map.containsKey(WORLD))
-		{
-			world = Bukkit.getWorld((String)map.get(WORLD));
-		}
-		if(world == null)
-		{
-			world = Bukkit.getWorlds().get(0);
-		}
-		return new LinmaluSquareLocation(world, map.containsKey(X1) ? (double)map.get(X1) : 0, map.containsKey(Y1) ? (double)map.get(Y1) : 0, map.containsKey(Z1) ? (double)map.get(Z1) : 0, map.containsKey(X2) ? (double)map.get(X2) : 0, map.containsKey(Y1) ? (double)map.get(Y1) : 0, map.containsKey(Z2) ? (double)map.get(Z2) : 0);
 	}
 }

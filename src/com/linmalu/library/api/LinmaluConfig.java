@@ -1,86 +1,149 @@
 package com.linmalu.library.api;
 
+import com.linmalu.library.LinmaluLibrary;
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class LinmaluConfig extends YamlConfiguration
 {
-	private final File file;
-	private boolean autoSave;
+	private static boolean _run = false;
+	private static Thread _linmaluConfigThread = null;
+	private static BlockingQueue<LinmaluConfig> _linmaluConfigQueue = new ArrayBlockingQueue<>(10000);
+	private static LinmaluConfig _config = new LinmaluConfig();
 
-	public LinmaluConfig(File file)
+	/**
+	 * 초기화
+	 */
+	public static void Initialize()
+	{
+		if(_run)
+		{
+			return;
+		}
+		_run = true;
+		ConfigurationSerialization.registerClass(LinmaluLocation.class);
+		ConfigurationSerialization.registerClass(LinmaluSquareLocation.class);
+		_linmaluConfigQueue.clear();
+		_linmaluConfigThread = new Thread(() ->
+		{
+			while(true)
+			{
+				try
+				{
+					LinmaluConfig config = _linmaluConfigQueue.take();
+					if(config == _config)
+					{
+						break;
+					}
+					config.save(config._file);
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+		_linmaluConfigThread.start();
+	}
+
+	/**
+	 * 종료
+	 */
+	public static void Close()
+	{
+		if(!_run)
+		{
+			return;
+		}
+		_run = false;
+		ConfigurationSerialization.unregisterClass(LinmaluLocation.class);
+		ConfigurationSerialization.unregisterClass(LinmaluSquareLocation.class);
+		try
+		{
+			_linmaluConfigQueue.put(_config);
+			_linmaluConfigThread.join();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		_linmaluConfigQueue.clear();
+		_linmaluConfigThread = null;
+	}
+
+	private final File _file;
+	private boolean _autoSave;
+
+	private LinmaluConfig()
+	{
+		_file = null;
+	}
+
+	public LinmaluConfig(@NotNull File file)
 	{
 		this(file, true);
 	}
-	public LinmaluConfig(File file, boolean autoSave)
+
+	public LinmaluConfig(@NotNull File file, boolean autoSave)
 	{
-		this.file = file;
-		this.autoSave = autoSave;
+		_file = file;
+		_autoSave = autoSave;
 		reload();
 	}
+
+	/**
+	 * 자동저장 유무 확인
+	 *
+	 * @return
+	 */
 	public boolean isAutoSave()
 	{
-		return autoSave;
+		return _autoSave;
 	}
+
+	/**
+	 * 자동저장 설정
+	 *
+	 * @param autoSave
+	 */
 	public void setAutoSave(boolean autoSave)
 	{
-		this.autoSave = autoSave;
+		_autoSave = autoSave;
 	}
-	@Override
-	public void set(String path, Object value)
+
+	/**
+	 * 리스트 형태의 값 가져오기
+	 *
+	 * @param path
+	 * @param <T>
+	 * @return Null Or Value
+	 */
+	public <T> List<T> getListData(@NotNull String path)
 	{
-		super.set(path, value);
-		if(autoSave)
-		{
-			save();
-		}
+		return getListData(path, null);
 	}
-	public boolean isLinmaluLocation(String path)
-	{
-		return isSet(path) && get(path) instanceof LinmaluLocation;
-	}
-	public LinmaluLocation getLinmaluLocation(String path)
-	{
-		return getLocation(path, new LinmaluLocation(Bukkit.getWorlds().get(0), 0, 0, 0));
-	}
-	public LinmaluLocation getLocation(String path, LinmaluLocation def)
-	{
-		if(isLinmaluLocation(path))
-		{
-			return (LinmaluLocation)get(path);
-		}
-		return def;
-	}
-	public boolean isLinmaluSquareLocation(String path)
-	{
-		return isSet(path) && get(path) instanceof LinmaluSquareLocation;
-	}
-	public LinmaluSquareLocation getLinmaluSquareLocation(String path)
-	{
-		return getLinmaluSquareLocation(path, new LinmaluSquareLocation(Bukkit.getWorlds().get(0), 0, 0, 0, 0, 0, 0));
-	}
-	public LinmaluSquareLocation getLinmaluSquareLocation(String path, LinmaluSquareLocation def)
-	{
-		if(isLinmaluSquareLocation(path))
-		{
-			return (LinmaluSquareLocation)get(path);
-		}
-		return def;
-	}
-	public <T> List<T> getListData(String path)
-	{
-		return getListData(path, new ArrayList<T>());
-	}
-	@SuppressWarnings("unchecked")
-	public <T> List<T> getListData(String path, List<T> def)
+
+	/**
+	 * 리스트 형태의 값 가져오기(실패시 기본값)
+	 *
+	 * @param path
+	 * @param def
+	 * @param <T>
+	 * @return Null Or Value
+	 */
+	public <T> List<T> getListData(@NotNull String path, @Nullable List<T> def)
 	{
 		try
 		{
@@ -91,19 +154,49 @@ public class LinmaluConfig extends YamlConfiguration
 		}
 		return def;
 	}
-	public void remove(String key)
+
+	/**
+	 * 값 설정
+	 *
+	 * @param path
+	 * @param value
+	 */
+	@Override
+	public void set(@NotNull String path, @Nullable Object value)
+	{
+		super.set(path, value);
+		if(_autoSave)
+		{
+			save();
+		}
+	}
+
+	/**
+	 * 값 삭제
+	 *
+	 * @param key
+	 */
+	public void remove(@NotNull String key)
 	{
 		set(key, null);
 	}
+
+	/**
+	 * 초기화
+	 */
 	public void clear()
 	{
 		getKeys(false).iterator().forEachRemaining(this::remove);
 	}
+
+	/**
+	 * 파일 다시 불러오기
+	 */
 	public void reload()
 	{
 		try
 		{
-			load(file);
+			load(_file);
 		}
 		catch(FileNotFoundException e)
 		{
@@ -113,65 +206,92 @@ public class LinmaluConfig extends YamlConfiguration
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * 파일 저장
+	 */
 	public void save()
 	{
-		try
+		if(!_linmaluConfigQueue.offer(this))
 		{
-			save(file);
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
+			Bukkit.getConsoleSender().sendMessage(LinmaluLibrary.getInstance().getTitle() + ChatColor.RED + "LinmaluConfigQueue Full!");
 		}
 	}
 
-	@Deprecated
-	public static boolean checkLocation(Location loc)
+	/**
+	 * LinmaluLocation 확인
+	 *
+	 * @param path
+	 * @return
+	 */
+	public boolean isLinmaluLocation(@NotNull String path)
 	{
-		try
-		{
-			toLocation(loc);
-			return true;
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
+		return isSet(path) && get(path) instanceof LinmaluLocation;
 	}
-	@Deprecated
-	public static boolean checkLocation(String msg)
+
+	/**
+	 * LinmaluLocation 가져오기
+	 *
+	 * @param path
+	 * @return Null Or Value
+	 */
+	public LinmaluLocation getLinmaluLocation(@NotNull String path)
 	{
-		try
-		{
-			toLocation(msg);
-			return true;
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
+		return getLinmaluLocation(path, null);
 	}
-	@Deprecated
-	public static String toLocation(Location loc)
+
+	/**
+	 * LinmaluLocation 가져오기(실패시 기본값)
+	 *
+	 * @param path
+	 * @param def
+	 * @return Null Or Value
+	 */
+	public LinmaluLocation getLinmaluLocation(@NotNull String path, @Nullable LinmaluLocation def)
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(loc.getWorld().getName());
-		sb.append(", ");
-		sb.append(loc.getX());
-		sb.append(", ");
-		sb.append(loc.getY());
-		sb.append(", ");
-		sb.append(loc.getZ());
-		sb.append(", ");
-		sb.append(loc.getYaw());
-		sb.append(", ");
-		sb.append(loc.getPitch());
-		return sb.toString();
+		if(isLinmaluLocation(path))
+		{
+			return (LinmaluLocation)get(path);
+		}
+		return def;
 	}
-	@Deprecated
-	public static Location toLocation(String msg)
+
+	/**
+	 * LinmaluSquareLocation 확인
+	 *
+	 * @param path
+	 * @return
+	 */
+	public boolean isLinmaluSquareLocation(@NotNull String path)
 	{
-		String[] args = msg.replace(" ", "").split(",");
-		return new Location(Bukkit.getWorld(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Float.parseFloat(args[4]), Float.parseFloat(args[5]));
+		return isSet(path) && get(path) instanceof LinmaluSquareLocation;
 	}
+
+	/**
+	 * LinmaluSquareLocation 가져오기
+	 *
+	 * @param path
+	 * @return Null Or Value
+	 */
+	public LinmaluSquareLocation getLinmaluSquareLocation(@NotNull String path)
+	{
+		return getLinmaluSquareLocation(path, null);
+	}
+
+	/**
+	 * LinmaluSquareLocation 가져오기(실패시 기본값)
+	 *
+	 * @param path
+	 * @param def
+	 * @return Null Or Value
+	 */
+	public LinmaluSquareLocation getLinmaluSquareLocation(@NotNull String path, @Nullable LinmaluSquareLocation def)
+	{
+		if(isLinmaluSquareLocation(path))
+		{
+			return (LinmaluSquareLocation)get(path);
+		}
+		return def;
+	}
+
 }
