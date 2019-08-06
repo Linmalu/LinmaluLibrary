@@ -3,7 +3,7 @@
  - author : 린마루(Linmalu)
  - HomePage : http://blog.linmalu.com/
  - Language : JAVA8
- - Spigot : spigot-1.12.2-R0.1-SNAPSHOT
+ - Spigot : spigot-api-1.13.2-R0.1-SNAPSHOT-shaded
  - Version : 1.13.2.0
  
  ###업데이트

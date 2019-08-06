@@ -6,8 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.nio.ByteBuffer;
-
 public abstract class LinmaluNetwork implements PluginMessageListener
 {
 	private final LinmaluMain _plugin;
@@ -26,13 +24,14 @@ public abstract class LinmaluNetwork implements PluginMessageListener
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message)
 	{
-		if(message[0] != _id)
+		LinmaluNetworkPacket packet = new LinmaluNetworkPacket(message);
+		if(packet.getId() != _id)
 		{
 			return;
 		}
 		try
 		{
-			onMessageEvent(ByteBuffer.wrap(message, 1, message.length));
+			onMessageEvent(packet);
 		}
 		catch(Exception e)
 		{
@@ -42,19 +41,21 @@ public abstract class LinmaluNetwork implements PluginMessageListener
 		}
 	}
 
+	protected LinmaluNetworkPacket getLinmaluNetworkPacket(int capacity)
+	{
+		return new LinmaluNetworkPacket(_id, capacity);
+	}
+
 	/**
 	 * 플레이어에게 메시지 보내기
 	 */
-	protected void sendMessage(Player player, byte[] message)
+	protected void sendMessage(Player player, LinmaluNetworkPacket packet)
 	{
-		ByteBuffer buffer = ByteBuffer.allocate(1 + message.length);
-		buffer.put(_id);
-		buffer.put(message);
-		player.sendPluginMessage(_plugin, _channel, buffer.array());
+		player.sendPluginMessage(_plugin, _channel, packet.getArray());
 	}
 
 	/**
 	 * 플레이어에게 온 메시지 이벤트
 	 */
-	protected abstract void onMessageEvent(ByteBuffer message);
+	protected abstract void onMessageEvent(LinmaluNetworkPacket packet);
 }
