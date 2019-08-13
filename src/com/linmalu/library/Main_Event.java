@@ -10,13 +10,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class Main_Event implements Listener
 {
 	@EventHandler
-	public void Event(PlayerJoinEvent event)
+	public void event(PlayerJoinEvent event)
 	{
 		Player player = event.getPlayer();
 		if(player.isOp())
 		{
 			LinmaluServer.version(LinmaluLibrary.getInstance(), player);
 		}
-		LinmaluBlacklist.Check(player);
+		LinmaluBlacklist.check(player);
 	}
 }
