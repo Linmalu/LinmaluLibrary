@@ -10,13 +10,13 @@ public class LinmaluLibrary extends LinmaluMain
 	{
 		super.onEnable();
 		registerEvents(new Main_Event());
-		LinmaluConfig.Initialize();
+		LinmaluConfig.initialize();
 	}
 
 	@Override
 	public void onDisable()
 	{
 		super.onDisable();
-		LinmaluConfig.Close();
+		LinmaluConfig.close();
 	}
 }
