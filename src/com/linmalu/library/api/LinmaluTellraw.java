@@ -76,19 +76,19 @@ public class LinmaluTellraw
 		return this;
 	}
 
-	public boolean is_change()
+	public boolean isChange()
 	{
 		return _change;
 	}
 
 	public <T extends CommandSender> void sendMessage(List<T> list)
 	{
-		list.forEach(sender -> sendMessage(sender));
+		list.forEach(this::sendMessage);
 	}
 
 	public <T extends CommandSender> void sendMessage(Set<T> list)
 	{
-		list.forEach(sender -> sendMessage(sender));
+		list.forEach(this::sendMessage);
 	}
 
 	public void sendMessage(CommandSender... list)
@@ -267,6 +267,10 @@ public class LinmaluTellraw
 		}
 		boolean count = true;
 		ItemMeta im = item.getItemMeta();
+		if(im == null)
+		{
+			return "\"}, {\"text\":\"" + ChatColor.AQUA + "[맨손]\"" + cmd + "}, {\"text\":\"";
+		}
 		StringBuilder name = new StringBuilder();
 		StringBuilder ench = new StringBuilder();
 		StringBuilder lore = new StringBuilder();
@@ -282,7 +286,6 @@ public class LinmaluTellraw
 			String itemName = item.getType().toString();
 			display = ChatColor.AQUA + "[" + itemName + "]";
 		}
-		count = true;
 		if(im.hasLore())
 		{
 			if(im.hasDisplayName())
@@ -317,7 +320,7 @@ public class LinmaluTellraw
 				{
 					ench.append(", ");
 				}
-				ench.append("{id:" + en.getKey().getKey() + ", lvl:" + im.getEnchantLevel(en) + "}");
+				ench.append("{id:").append(en.getKey().getKey()).append(", lvl:").append(im.getEnchantLevel(en)).append("}");
 			}
 		}
 		if(im instanceof EnchantmentStorageMeta)
@@ -333,7 +336,7 @@ public class LinmaluTellraw
 				{
 					ench.append(", ");
 				}
-				ench.append("{id:" + en.getKey().getKey() + ", lvl:" + esm.getStoredEnchantLevel(en) + "}");
+				ench.append("{id:").append(en.getKey().getKey()).append(", lvl:").append(esm.getStoredEnchantLevel(en)).append("}");
 			}
 		}
 		count = true;

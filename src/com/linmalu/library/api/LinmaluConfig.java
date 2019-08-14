@@ -24,7 +24,7 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * 초기화
 	 */
-	public static void Initialize()
+	public static void initialize()
 	{
 		if(_run)
 		{
@@ -60,7 +60,7 @@ public class LinmaluConfig extends YamlConfiguration
 	/**
 	 * 종료
 	 */
-	public static void Close()
+	public static void close()
 	{
 		if(!_run)
 		{
@@ -136,13 +136,14 @@ public class LinmaluConfig extends YamlConfiguration
 	 * @param def Null Or Value
 	 * @return Null Or Value
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> List<T> getListData(String path, List<T> def)
 	{
 		try
 		{
 			def = (List<T>)getList(path, def);
 		}
-		catch(Exception e)
+		catch(Exception ignored)
 		{
 		}
 		return def;
@@ -188,7 +189,7 @@ public class LinmaluConfig extends YamlConfiguration
 		{
 			load(_file);
 		}
-		catch(FileNotFoundException e)
+		catch(FileNotFoundException ignored)
 		{
 		}
 		catch(IOException | InvalidConfigurationException e)

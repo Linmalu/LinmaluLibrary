@@ -16,7 +16,7 @@ public class LinmaluBlacklist
 	/**
 	 * 블랙리스트 체크
 	 */
-	public static void Check(Player player)
+	public static void check(Player player)
 	{
 		new Thread(() ->
 		{
@@ -46,16 +46,14 @@ public class LinmaluBlacklist
 			JsonObject json = new JsonParser().parse(sb.toString()).getAsJsonObject();
 			if(json.get("blacklist").getAsBoolean())
 			{
-				Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getInstance(), () ->
-				{
-					player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason").getAsString() + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire");
-				});
+				Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getInstance(), () -> player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason").getAsString() + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire"));
 				return true;
 			}
+			return false;
 		}
 		catch(Exception e)
 		{
+			return false;
 		}
-		return false;
 	}
 }
