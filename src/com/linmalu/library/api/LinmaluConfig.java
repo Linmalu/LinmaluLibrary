@@ -1,8 +1,5 @@
 package com.linmalu.library.api;
 
-import com.linmalu.library.LinmaluLibrary;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -203,9 +200,13 @@ public class LinmaluConfig extends YamlConfiguration
 	 */
 	public void save()
 	{
-		if(!_linmaluConfigQueue.offer(this))
+		try
 		{
-			Bukkit.getConsoleSender().sendMessage(LinmaluLibrary.getInstance().getTitle() + ChatColor.RED + "LinmaluConfigQueue Full!");
+			_linmaluConfigQueue.put(this);
+		}
+		catch(InterruptedException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
