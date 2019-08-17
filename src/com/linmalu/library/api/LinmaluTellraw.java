@@ -98,7 +98,6 @@ public class LinmaluTellraw
 			if(sender instanceof Player)
 			{
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName() + " {\"text\":\"\",\"extra\":[{\"text\":\"" + _msg + "\"}]}");
-				System.out.println(" {\"text\":\"\",\"extra\":[{\"text\":\"" + _msg + "\"}]}");
 			}
 			else
 			{
