@@ -2,8 +2,6 @@ package com.linmalu.library.api;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,16 +62,6 @@ public abstract class LinmaluMain extends JavaPlugin
 	public String getTitle()
 	{
 		return ChatColor.AQUA + "[" + getDescription().getDescription() + "] " + ChatColor.RESET;
-	}
-
-	protected void registerCommand(CommandExecutor command)
-	{
-		getCommand(getDescription().getName()).setExecutor(command);
-	}
-
-	protected void registerEvents(Listener event)
-	{
-		getServer().getPluginManager().registerEvents(event, this);
 	}
 
 	protected void registerLibrary(String name)
