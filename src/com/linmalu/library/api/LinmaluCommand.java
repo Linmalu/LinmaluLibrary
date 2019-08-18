@@ -50,7 +50,7 @@ public abstract class LinmaluCommand implements CommandExecutor
 		for(int i = beginIndex; i < args.length; i++)
 		{
 			sb.append(args[i]);
-			if(i != beginIndex)
+			if(i < args.length - 1)
 			{
 				sb.append(" ");
 			}
