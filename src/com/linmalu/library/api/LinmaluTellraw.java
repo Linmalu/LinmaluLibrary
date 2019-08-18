@@ -13,8 +13,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 public class LinmaluTellraw
 {
@@ -81,14 +80,12 @@ public class LinmaluTellraw
 		return _change;
 	}
 
-	public <T extends CommandSender> void sendMessage(List<T> list)
+	public <T extends CommandSender> void sendMessage(Collection<T> collection)
 	{
-		list.forEach(this::sendMessage);
-	}
-
-	public <T extends CommandSender> void sendMessage(Set<T> list)
-	{
-		list.forEach(this::sendMessage);
+		for(T sender : collection)
+		{
+			sendMessage(sender);
+		}
 	}
 
 	public void sendMessage(CommandSender... list)
