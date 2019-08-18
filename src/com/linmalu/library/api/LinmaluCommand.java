@@ -1,5 +1,6 @@
 package com.linmalu.library.api;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -41,5 +42,19 @@ public abstract class LinmaluCommand implements CommandExecutor
 			Collections.sort(result);
 			return result;
 		});
+	}
+
+	protected String joinString(String[] args, int beginIndex)
+	{
+		StringBuilder sb = new StringBuilder();
+		for(int i = beginIndex; i < args.length; i++)
+		{
+			sb.append(args[i]);
+			if(i != beginIndex)
+			{
+				sb.append(" ");
+			}
+		}
+		return ChatColor.translateAlternateColorCodes('&', sb.toString());
 	}
 }
