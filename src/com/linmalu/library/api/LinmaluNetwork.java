@@ -8,17 +8,17 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 public abstract class LinmaluNetwork implements PluginMessageListener
 {
-	private final LinmaluMain _plugin;
+	private final LinmaluMain _main;
 	private final String _channel;
 	private final byte _id;
 
-	public LinmaluNetwork(LinmaluMain plugin, String channel, byte id)
+	public LinmaluNetwork(LinmaluMain main, String channel, byte id)
 	{
-		_plugin = plugin;
+		_main = main;
 		_channel = channel;
 		_id = id;
-		Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, channel);
-		Bukkit.getMessenger().registerIncomingPluginChannel(plugin, channel, this);
+		Bukkit.getMessenger().registerOutgoingPluginChannel(main, channel);
+		Bukkit.getMessenger().registerIncomingPluginChannel(main, channel, this);
 	}
 
 	@Override
@@ -35,8 +35,8 @@ public abstract class LinmaluNetwork implements PluginMessageListener
 		}
 		catch(Exception e)
 		{
-			Bukkit.getConsoleSender().sendMessage(LinmaluLibrary.getInstance().getTitle() + ChatColor.GOLD + player.getName() + ChatColor.YELLOW + " - Network Message Error");
-			player.kickPlayer(LinmaluLibrary.getInstance().getTitle() + ChatColor.YELLOW + "Network Message Error");
+			Bukkit.getConsoleSender().sendMessage(_main.getTitle() + ChatColor.GOLD + player.getName() + ChatColor.YELLOW + " - Network Message Error");
+			player.kickPlayer(_main.getTitle() + ChatColor.YELLOW + "Network Message Error");
 			e.printStackTrace();
 		}
 	}
@@ -51,7 +51,7 @@ public abstract class LinmaluNetwork implements PluginMessageListener
 	 */
 	protected void sendMessage(Player player, LinmaluNetworkPacket packet)
 	{
-		player.sendPluginMessage(_plugin, _channel, packet.getArray());
+		player.sendPluginMessage(_main, _channel, packet.getArray());
 	}
 
 	/**
