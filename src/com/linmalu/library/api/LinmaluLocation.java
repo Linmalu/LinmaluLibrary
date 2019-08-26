@@ -10,19 +10,9 @@ import java.util.Map;
 
 public class LinmaluLocation extends Location implements ConfigurationSerializable
 {
-	private static final String WORLD = "world";
-	private static final String X = "x";
-	private static final String Y = "y";
-	private static final String Z = "z";
-	private static final String YAW = "yaw";
-	private static final String PITCH = "pitch";
-
-	/**
-	 * LinmaluLocation 변환하기
-	 */
-	public static LinmaluLocation getLinmaluLocation(Location loc)
+	public LinmaluLocation(Location location)
 	{
-		return new LinmaluLocation(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+		super(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
 	public LinmaluLocation(World world, double x, double y, double z)
@@ -35,15 +25,12 @@ public class LinmaluLocation extends Location implements ConfigurationSerializab
 		super(world, x, y, z, yaw, pitch);
 	}
 
-	public static LinmaluLocation deserialize(Map<String, Object> map)
-	{
-		World world = Bukkit.getWorld((String)map.get(WORLD));
-		if(world == null)
-		{
-			return null;
-		}
-		return new LinmaluLocation(world, (double)map.get(X), (double)map.get(Y), (double)map.get(Z), (float)map.get(YAW), (float)map.get(PITCH));
-	}
+	private static final String WORLD = "world";
+	private static final String X = "x";
+	private static final String Y = "y";
+	private static final String Z = "z";
+	private static final String YAW = "yaw";
+	private static final String PITCH = "pitch";
 
 	@Override
 	public Map<String, Object> serialize()
@@ -56,5 +43,15 @@ public class LinmaluLocation extends Location implements ConfigurationSerializab
 		map.put(YAW, getYaw());
 		map.put(PITCH, getPitch());
 		return map;
+	}
+
+	public static LinmaluLocation deserialize(Map<String, Object> map)
+	{
+		World world = Bukkit.getWorld((String)map.get(WORLD));
+		if(world == null)
+		{
+			return null;
+		}
+		return new LinmaluLocation(world, (double)map.get(X), (double)map.get(Y), (double)map.get(Z), (float)map.get(YAW), (float)map.get(PITCH));
 	}
 }
