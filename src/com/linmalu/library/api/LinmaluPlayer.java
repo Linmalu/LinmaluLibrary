@@ -1,14 +1,15 @@
 package com.linmalu.library.api;
 
 import com.linmalu.library.LinmaluLibrary;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +17,25 @@ import java.util.List;
 
 public class LinmaluPlayer
 {
+	public static final String LINMALU_CHANNEL = "LinmaluChannel";
+
+	/**
+	 * 채널 가져오기
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<String> getChannels(Player player)
+	{
+		LinmaluMain main = LinmaluLibrary.getInstance();
+		for(MetadataValue metadata : player.getMetadata(LINMALU_CHANNEL))
+		{
+			if(metadata.getOwningPlugin().toString().equals(main.toString()))
+			{
+				return (List<String>)metadata.value();
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * 포션 효과 추가하기
 	 */
@@ -35,25 +55,46 @@ public class LinmaluPlayer
 			}
 		}
 		return false;
+	}
 
+	/**
+	 * 플레이어에게 아이템 주기
+	 */
+	public static void addItemStack(Player player, ItemStack item)
+	{
+		player.getInventory().addItem(item).forEach((key, value) -> player.getWorld().dropItem(player.getLocation(), value));
 	}
 
 	/**
 	 * 접속중인 플레이어들 얻기
 	 */
+	@SuppressWarnings("unchecked")
 	public static Collection<? extends Player> getOnlinePlayers()
 	{
-		Object players = Bukkit.getOnlinePlayers();
-		if(players instanceof Collection)
+		try
 		{
-			return (Collection<Player>)players;
+			Method method = Bukkit.class.getMethod("getOnlinePlayers");
+			Object players = method.invoke(null);
+			if(players instanceof Collection)
+			{
+				return (Collection<Player>)players;
+			}
+			else
+			{
+				return Arrays.asList((Player[])players);
+			}
 		}
-		return Arrays.asList((Player[])players);
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
 	 * 플레이어 얻기
 	 */
+	@Deprecated
 	public static Collection<? extends Player> getPlayers(String name)
 	{
 		if(name.equals("@"))
@@ -70,27 +111,21 @@ public class LinmaluPlayer
 	}
 
 	/**
-	 * 리스폰 하기
+	 * 플레이어 얻기
 	 */
-	public static void Respawn(Player player)
+	public static Collection<? extends Player> getPlayers(CommandSender sender, String name)
 	{
-		Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getInstance(), () -> player.spigot().respawn());
-	}
-
-	/**
-	 * 액션바 메시지 전체플레이어에게 보내기
-	 */
-	public static void sendActionBarMessage(String message)
-	{
-		Bukkit.getOnlinePlayers().forEach(player -> sendActionBarMessage(player, message));
-	}
-
-	/**
-	 * 액션바 메시지 플레이어에게 보내기
-	 */
-	public static void sendActionBarMessage(Player player, String message)
-	{
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+		if(name.equals("@"))
+		{
+			return getOnlinePlayers();
+		}
+		List<Player> players = new ArrayList<>();
+		Player player = Bukkit.getPlayer(name);
+		if(player != null)
+		{
+			players.add(player);
+		}
+		return players;
 	}
 
 	/**
@@ -100,7 +135,7 @@ public class LinmaluPlayer
 	{
 		if(size < 1)
 		{
-			size = messages.length < 1 ? 1 : messages.length;
+			size = Math.max(messages.length, 1);
 		}
 		if(page < 1)
 		{
