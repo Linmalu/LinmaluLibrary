@@ -9,7 +9,7 @@ public class LinmaluLibrary extends LinmaluMain
 	public void onEnable()
 	{
 		super.onEnable();
-		new Main_Event(this);
+		new LinmaluLibraryEvent(this);
 		LinmaluConfig.initialize();
 	}
 
