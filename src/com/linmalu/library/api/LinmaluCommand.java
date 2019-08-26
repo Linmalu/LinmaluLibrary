@@ -14,8 +14,11 @@ public abstract class LinmaluCommand implements CommandExecutor
 {
 	protected abstract List<String> TabCompleter(CommandSender sender, Command command, String alias, String[] args);
 
+	protected final LinmaluMain _main;
+
 	public LinmaluCommand(LinmaluMain main)
 	{
+		_main = main;
 		PluginCommand cmd = main.getCommand(main.getDescription().getName());
 		cmd.setExecutor(this);
 		cmd.setTabCompleter((sender, command, alias, args) ->
