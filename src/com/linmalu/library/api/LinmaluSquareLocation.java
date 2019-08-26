@@ -9,14 +9,6 @@ import java.util.Map;
 
 public class LinmaluSquareLocation implements ConfigurationSerializable
 {
-	private static String WORLD = "world";
-	private static String X1 = "x1";
-	private static String Y1 = "y1";
-	private static String Z1 = "z1";
-	private static String X2 = "x2";
-	private static String Y2 = "y2";
-	private static String Z2 = "z2";
-
 	private World _world;
 	private double _x1, _y1, _z1, _x2, _y2, _z2;
 
@@ -149,6 +141,14 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 		_z2 = z2;
 		return this;
 	}
+
+	private static String WORLD = "world";
+	private static String X1 = "x1";
+	private static String Y1 = "y1";
+	private static String Z1 = "z1";
+	private static String X2 = "x2";
+	private static String Y2 = "y2";
+	private static String Z2 = "z2";
 
 	@Override
 	public Map<String, Object> serialize()
