@@ -4,12 +4,10 @@
  - HomePage : http://blog.linmalu.com/
  - Language : JAVA8
  - Spigot : spigot-api-1.13.2-R0.1-SNAPSHOT-shaded
- - Version : 1.13.2.0
+ - Version : 1.13.2.1
  
  ###업데이트
 - 버전 및 기능 업데이트
-- ProtocolLib 플러그인의 종속성을 삭제
-- 다른버전에서도 사용가능하도록 변경
 
 ###소개
 - 플러그인에 이용되는 기능들을 따로 분류한 플러그인입니다.
