@@ -150,16 +150,6 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 		return this;
 	}
 
-	public static LinmaluSquareLocation deserialize(Map<String, Object> map)
-	{
-		World world = Bukkit.getWorld((String)map.get(WORLD));
-		if(world == null)
-		{
-			return null;
-		}
-		return new LinmaluSquareLocation(world, (double)map.get(X1), (double)map.get(Y1), (double)map.get(Z1), (double)map.get(X2), (double)map.get(Y2), (double)map.get(Z2));
-	}
-
 	@Override
 	public Map<String, Object> serialize()
 	{
@@ -172,5 +162,15 @@ public class LinmaluSquareLocation implements ConfigurationSerializable
 		map.put(Y2, _y2);
 		map.put(Z2, _z2);
 		return map;
+	}
+
+	public static LinmaluSquareLocation deserialize(Map<String, Object> map)
+	{
+		World world = Bukkit.getWorld((String)map.get(WORLD));
+		if(world == null)
+		{
+			return null;
+		}
+		return new LinmaluSquareLocation(world, (double)map.get(X1), (double)map.get(Y1), (double)map.get(Z1), (double)map.get(X2), (double)map.get(Y2), (double)map.get(Z2));
 	}
 }
