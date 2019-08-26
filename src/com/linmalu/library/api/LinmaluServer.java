@@ -1,11 +1,11 @@
 package com.linmalu.library.api;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -56,14 +56,14 @@ public class LinmaluServer
 					sb.append(sc.nextLine());
 					sb.append("\r\n");
 				}
-				JsonObject json = new JsonParser().parse(sb.toString()).getAsJsonObject();
-				if(json.has("result"))
+				JSONObject json = (JSONObject)new JSONParser().parse(sb.toString());
+				if(json.containsKey("result"))
 				{
-					result = json.get("result").getAsBoolean();
+					result = (boolean)json.get("result");
 				}
 			}
 		}
-		catch(Exception e)
+		catch(Exception ignored)
 		{
 		}
 		if(result || !plugin.getDescription().getName().equalsIgnoreCase(name))
@@ -107,14 +107,14 @@ public class LinmaluServer
 						}
 						sb.append(sc.nextLine());
 					}
-					JsonObject json = new JsonParser().parse(sb.toString()).getAsJsonObject();
-					if(json.has("result") && json.get("result").getAsBoolean())
+					JSONObject json = (JSONObject)new JSONParser().parse(sb.toString());
+					if(json.containsKey("result") && (boolean)json.get("result"))
 					{
 						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> sender.sendMessage(plugin.getTitle() + ChatColor.GREEN + "최신버전이 존재합니다."));
 					}
 				}
 			}
-			catch(Exception e)
+			catch(Exception ignored)
 			{
 			}
 		}).start();
