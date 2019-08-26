@@ -31,8 +31,9 @@ public class LinmaluBlacklist
 	{
 		try
 		{
+			LinmaluMain main = LinmaluLibrary.getInstance();
 			URLConnection url = new URL("http://api.mc-blacklist.kr/API/Check/" + check).openConnection();
-			url.setRequestProperty("User-Agent", LinmaluLibrary.getInstance().getDescription().getName() + " v" + LinmaluLibrary.getInstance().getDescription().getVersion());
+			url.setRequestProperty("User-Agent", main.getDescription().getName() + " v" + main.getDescription().getVersion());
 			StringBuilder sb = new StringBuilder();
 			try(InputStream in = url.getInputStream())
 			{
@@ -46,7 +47,7 @@ public class LinmaluBlacklist
 			JsonObject json = new JsonParser().parse(sb.toString()).getAsJsonObject();
 			if(json.get("blacklist").getAsBoolean())
 			{
-				Bukkit.getScheduler().scheduleSyncDelayedTask(LinmaluLibrary.getInstance(), () -> player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason").getAsString() + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire"));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason").getAsString() + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire"));
 				return true;
 			}
 			return false;
