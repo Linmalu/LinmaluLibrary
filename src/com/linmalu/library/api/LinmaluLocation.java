@@ -25,6 +25,11 @@ public class LinmaluLocation extends Location implements ConfigurationSerializab
 		super(world, x, y, z, yaw, pitch);
 	}
 
+	public LinmaluLocation(World world, double x, double y, double z, double yaw, double pitch)
+	{
+		super(world, x, y, z, (float)yaw, (float)pitch);
+	}
+
 	private static final String WORLD = "world";
 	private static final String X = "x";
 	private static final String Y = "y";
@@ -52,6 +57,6 @@ public class LinmaluLocation extends Location implements ConfigurationSerializab
 		{
 			return null;
 		}
-		return new LinmaluLocation(world, (double)map.get(X), (double)map.get(Y), (double)map.get(Z), (float)map.get(YAW), (float)map.get(PITCH));
+		return new LinmaluLocation(world, (double)map.get(X), (double)map.get(Y), (double)map.get(Z), (double)map.get(YAW), (double)map.get(PITCH));
 	}
 }
