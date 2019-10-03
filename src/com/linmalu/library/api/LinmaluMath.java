@@ -74,60 +74,68 @@ public class LinmaluMath
 		return (Math.toDegrees(Math.atan2(z, x)) + 270) % 360;
 	}
 
+	/**
+	 * 사이값으로 바꾸기
+	 */
 	public static int betweenValue(int value, int min, int max)
 	{
-		int size = max - min;
-		int result = value % size;
-		return (result < 0 ? result + size : result) + min;
+		return (value + min) % (max - min) + (value < 0 ? max : min);
 	}
 
+	/**
+	 * 사이값으로 바꾸기
+	 */
 	public static long betweenValue(long value, long min, long max)
 	{
-		long size = max - min;
-		long result = value % size;
-		return (result < 0 ? result + size : result) + min;
+		return (value + min) % (max - min) + (value < 0 ? max : min);
 	}
 
+	/**
+	 * 사이값으로 바꾸기
+	 */
 	public static float betweenValue(float value, float min, float max)
 	{
-		float size = max - min;
-		float result = value % size;
-		return (result < 0 ? result + size : result) + min;
+		return (value + min) % (max - min) + (value < 0 ? max : min);
 	}
 
+	/**
+	 * 사이값으로 바꾸기
+	 */
 	public static double betweenValue(double value, double min, double max)
 	{
-		double size = max - min;
-		double result = value % size;
-		return (result < 0 ? result + size : result) + min;
+		return (value + min) % (max - min) + (value < 0 ? max : min);
 	}
 
-	public static int distanceValue(int value1, int value2, int min, int max, boolean ascendingOrder)
+	/**
+	 * 사이값에서 거리 구하기
+	 */
+	public static int distanceValue(int value1, int value2, int min, int max)
 	{
-		value1 = betweenValue(value1, min, max);
-		value2 = betweenValue(value2, min, max);
-		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+		return betweenValue(value2 - value1, 0, max - min);
 	}
 
-	public static long distanceValue(long value1, long value2, long min, long max, boolean ascendingOrder)
+	/**
+	 * 사이값에서 거리 구하기
+	 */
+	public static long distanceValue(long value1, long value2, long min, long max)
 	{
-		value1 = betweenValue(value1, min, max);
-		value2 = betweenValue(value2, min, max);
-		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+		return betweenValue(value2 - value1, 0, max - min);
 	}
 
-	public static float distanceValue(float value1, float value2, float min, float max, boolean ascendingOrder)
+	/**
+	 * 사이값에서 거리 구하기
+	 */
+	public static float distanceValue(float value1, float value2, float min, float max)
 	{
-		value1 = betweenValue(value1, min, max);
-		value2 = betweenValue(value2, min, max);
-		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+		return betweenValue(value2 - value1, 0, max - min);
 	}
 
-	public static double distanceValue(double value1, double value2, double min, double max, boolean ascendingOrder)
+	/**
+	 * 사이값에서 거리 구하기
+	 */
+	public static double distanceValue(double value1, double value2, double min, double max)
 	{
-		value1 = betweenValue(value1, min, max);
-		value2 = betweenValue(value2, min, max);
-		return betweenValue(ascendingOrder ? value2 - value1 : value1 - value2, 0, max - min);
+		return betweenValue(value2 - value1, 0, max - min);
 	}
 
 	public static double distance(Location loc1, Location loc2)
