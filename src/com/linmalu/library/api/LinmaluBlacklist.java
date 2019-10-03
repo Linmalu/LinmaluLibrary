@@ -1,11 +1,11 @@
 package com.linmalu.library.api;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.linmalu.library.LinmaluLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -44,10 +44,10 @@ public class LinmaluBlacklist
 					sb.append(new String(data, 0, size));
 				}
 			}
-			JsonObject json = new JsonParser().parse(sb.toString()).getAsJsonObject();
-			if(json.get("blacklist").getAsBoolean())
+			JSONObject json = (JSONObject)new JSONParser().parse(sb.toString());
+			if(json.containsKey("blacklist") && (boolean)json.get("blacklist"))
 			{
-				Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason").getAsString() + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire"));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> player.kickPlayer(ChatColor.AQUA + "[MC-BlackList]\n" + ChatColor.RESET + json.get("reason") + "\n" + ChatColor.GRAY + "문의 : http://mc-blacklist.kr/inquire"));
 				return true;
 			}
 			return false;
