@@ -1,10 +1,9 @@
 # LinmaluLibrary
-
  - author : 린마루(Linmalu)
  - HomePage : http://blog.linmalu.com/
  - Language : JAVA8
  - Spigot : spigot-api-1.13.2-R0.1-SNAPSHOT-shaded
- - Version : 1.13.2.1
+ - Version : 1.13.2.2
  
  ###업데이트
 - 버전 및 기능 업데이트
